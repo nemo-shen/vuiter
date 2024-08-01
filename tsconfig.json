@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "dist",
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "strict": true,
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "composite": true,
+    "skipLibCheck": true,
+    "lib": ["esnext"],
+    "paths": {
+      "~/*": ["src/*"]
+    }
+  },
+  "include": [
+    "src/**/*.ts"
+  ]
+}
