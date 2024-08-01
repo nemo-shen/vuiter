@@ -1,0 +1,33 @@
+{
+  "name": "vuiter",
+  "type": "module",
+  "packageManager": "pnpm@9.6.0",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "ts-node": "ts-node",
+    "dev": "vite build --watch",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@vue/compiler-core": "catalog:",
+    "@vue/reactivity": "catalog:",
+    "@vue/runtime-core": "catalog:",
+    "ansi-escapes": "^7.0.0",
+    "chalk": "^5.3.0",
+    "yoga-layout": "^3.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "eslint-config-prettier": "catalog:",
+    "postinstall-postinstall": "catalog:",
+    "prettier": "catalog:",
+    "ts-node": "catalog:",
+    "tslib": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}
