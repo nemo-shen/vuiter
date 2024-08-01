@@ -2,6 +2,7 @@ import process from "node:process";
 import Yoga, { FlexDirection, Direction, Edge, Node as YogaNode } from "yoga-layout";
 import chalk from "chalk";
 import { EDGE_ALL } from "yoga-layout-prebuilt";
+import { BORDER_STYLE } from "./contants";
 
 const HORIZONTAL_LINE = "━";
 const VERTICAL_LINE = "┃";
@@ -27,10 +28,14 @@ type PickCSSStyleDeclaration = Pick<
   | "borderBottom"
   | "borderLeft"
   | "borderRight"
+  | "borderWidth"
+  | "borderStyle"
+  | "borderColor"
 >;
 interface VUICSSStyleDeclaration extends PickCSSStyleDeclaration {
   width: string | number;
   height: string | number;
+  borderStyle: keyof typeof BORDER_STYLE;
   display: "flex";
   flexDirection: "row" | "column";
   alignItems: "start" | "center" | "end";
@@ -92,15 +97,37 @@ class Div implements VUIDivElement {
     this.node = Yoga.Node.create();
     this.node.setWidth(this.width);
     this.node.setHeight(this.height);
-    if (this.style.border) {
+    // TODO: need compatible string like '1px'
+    // borderWidth only display 1px
+    if (+this.style.borderWidth > 0) {
       this.node.setBorder(Edge.All, 1);
     }
+    // TODO: need parse border style `${borderWidth} ${borderStyle} [${borderColor}]`
+    // if (this.style.border) {
+    //   this.node.setBorder(Edge.All, 2);
+    // }
     if (this.style.padding) {
-      this.node.setPadding(Edge.All, 1);
+      this.node.setPadding(Edge.Top, this.style.padding);
+      this.node.setPadding(Edge.Right, this.style.padding);
+      this.node.setPadding(Edge.Bottom, this.style.padding);
+      this.node.setPadding(Edge.Left, this.style.padding);
     }
     if (this.style.margin) {
-      this.node.setMargin(Edge.All, 1);
+      this.node.setMargin(Edge.Top, this.style.margin);
+      this.node.setMargin(Edge.Right, this.style.margin);
+      this.node.setMargin(Edge.Bottom, this.style.margin);
+      this.node.setMargin(Edge.Left, this.style.margin);
     }
+    // if (this.style.marginTop) {
+    //   this.node.setMargin(Edge.Top, this.style.marginTop);
+    // }
+    // if (this.style.marginRight) {
+    //   this.node.setMargin(Edge.Right, this.style.marginRight);
+    // }
+    // if (this.style.marginBottom) {
+    //   this.node.setMargin(Edge.Right, this.style.marginRight);
+    //
+    // }
 
     this.node.setFlexDirection(FlexDirection.Row);
 

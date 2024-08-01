@@ -1,5 +1,5 @@
 export const BORDER_STYLE = {
-  singleLine: {
+  soild: {
     topLeft: "┌",
     topRight: "┐",
     bottomLeft: "└",
@@ -7,7 +7,7 @@ export const BORDER_STYLE = {
     horizontal: "─",
     vertical: "│",
   },
-  doubleLine: {
+  double: {
     topLeft: "╔",
     topRight: "╗",
     bottomLeft: "╚",
@@ -15,7 +15,7 @@ export const BORDER_STYLE = {
     horizontal: "═",
     vertical: "║",
   },
-  heavyLine: {
+  bold: {
     topLeft: "┏",
     topRight: "┓",
     bottomLeft: "┗",
@@ -23,12 +23,20 @@ export const BORDER_STYLE = {
     horizontal: "━",
     vertical: "┃",
   },
-  mixedLine: {
+  round: {
     topLeft: "╭",
     topRight: "╮",
     bottomLeft: "╰",
     bottomRight: "╯",
     horizontal: "─",
     vertical: "│",
+  },
+  dotted: {
+    topLeft: "😂",
+    topRight: "😂",
+    bottomLeft: "😂",
+    bottomRight: "😂",
+    horizontal: "😂",
+    vertical: "😂",
   },
 };

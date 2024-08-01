@@ -32,9 +32,10 @@ const child1 = new Div({
   style: {
     width: 10,
     height: 10,
-    // padding: 1,
-    // margin: 1,
-    border: 1,
+    padding: 1,
+    margin: 1,
+    borderWidth: 1,
+    borderStyle: "bold",
   },
 });
 const child2 = new Div({
@@ -43,7 +44,8 @@ const child2 = new Div({
     height: 20,
     padding: 1,
     margin: 1,
-    border: 1,
+    borderWidth: 1,
+    borderStyle: "round",
   },
 });
 app.setChildren(child1, child2);
@@ -91,7 +93,7 @@ function drawNodeToCanvas(el: VUIDivElement, canvas: any[][], style = {}) {
     }
   }
 
-  const borderStyle = BORDER_STYLE.mixedLine;
+  const borderStyle = BORDER_STYLE[el.style?.borderStyle ?? "soild"];
 
   for (let y = top; y < top + height; y++) {
     for (let x = left; x < left + width; x++) {
