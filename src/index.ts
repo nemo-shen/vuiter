@@ -48,7 +48,18 @@ const child2 = new Div({
     borderStyle: "round",
   },
 });
-app.setChildren(child1, child2);
+const child3 = new Div({
+  style: {
+    width: 40,
+    height: 20,
+    borderWidth: 1,
+    borderStyle: "round",
+    top: 2,
+    left: 3,
+    position: "absolute",
+  },
+});
+app.setChildren(child1, child2, child3);
 app.node.calculateLayout(undefined, undefined, Direction.LTR);
 
 // 创建二维数组 canvas

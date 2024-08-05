@@ -1,5 +1,5 @@
 import process from "node:process";
-import Yoga, { FlexDirection, Direction, Edge, Node as YogaNode } from "yoga-layout";
+import Yoga, { FlexDirection, Direction, Edge, Node as YogaNode, PositionType } from "yoga-layout";
 import chalk from "chalk";
 import { EDGE_ALL } from "yoga-layout-prebuilt";
 import { BORDER_STYLE } from "./contants";
@@ -41,6 +41,11 @@ interface VUICSSStyleDeclaration extends PickCSSStyleDeclaration {
   alignItems: "start" | "center" | "end";
   justifyContent: "center" | "start" | "end";
   backgroundColor?: string;
+  top?: number;
+  left?: number;
+  right?: number;
+  bottom?: number;
+  position?: "relative" | "absolute" | "static";
 }
 
 export interface VUIDivElement {
@@ -65,6 +70,7 @@ const DEFAULT_STYLE: VUICSSStyleDeclaration = {
   flexDirection: "row",
   alignItems: "start",
   justifyContent: "start",
+  position: "relative",
 };
 class Div implements VUIDivElement {
   public style?: VUICSSStyleDeclaration = DEFAULT_STYLE;
@@ -117,6 +123,28 @@ class Div implements VUIDivElement {
       this.node.setMargin(Edge.Right, this.style.margin);
       this.node.setMargin(Edge.Bottom, this.style.margin);
       this.node.setMargin(Edge.Left, this.style.margin);
+    }
+    if (this.style.position) {
+      let positionType;
+      switch (this.style.position) {
+        case "relative":
+          positionType = PositionType.Relative;
+          break;
+        case "absolute":
+          positionType = PositionType.Absolute;
+          break;
+        case "static":
+          positionType = PositionType.Static;
+          break;
+        default:
+          positionType = PositionType.Relative;
+          break;
+      }
+      this.node.setPositionType(positionType);
+      if (this.style.top) this.node.setPosition(Edge.Top, this.style.top);
+      if (this.style.right) this.node.setPosition(Edge.Right, this.style.right);
+      if (this.style.bottom) this.node.setPosition(Edge.Bottom, this.style.bottom);
+      if (this.style.left) this.node.setPosition(Edge.Left, this.style.left);
     }
     // if (this.style.marginTop) {
     //   this.node.setMargin(Edge.Top, this.style.marginTop);
