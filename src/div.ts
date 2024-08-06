@@ -1,3 +1,7 @@
+/** ************************************************************************************************
+ * element:div
+ * 对YogaNode的封装，用于和web的div表现尽量保持统一
+ ************************************************************************************************ */
 import Yoga, {
   Display,
   FlexDirection,
@@ -28,15 +32,9 @@ export type VUICSSStyleDeclaration = {
   borderWidth: number;
   borderStyle?: keyof typeof BORDER_STYLE;
   borderColor?: string;
-}
+};
 
-export interface VUIDivElement {
-  style?: VUICSSStyleDeclaration;
-  node: YogaNode;
-  children: Node[];
-}
-
-type Node = VUIDivElement;
+export type Node = Div;
 
 /**
  * <div style="width: 100px; height: 100px"></div>
@@ -53,7 +51,7 @@ const DEFAULT_STYLE: VUICSSStyleDeclaration = {
   padding: 0,
   borderWidth: 0,
 };
-class Div implements VUIDivElement {
+class Div {
   public style: VUICSSStyleDeclaration = DEFAULT_STYLE;
   public node: YogaNode;
   public children: Node[] = [];
@@ -159,12 +157,18 @@ class Div implements VUIDivElement {
     }
   }
 
-  public setChildren(...elements: Node[]) {
-    this.children = elements;
-    for (let i = 0; i < elements.length; i++) {
-      this.node.insertChild(elements[i].node, i);
+  append(...elements: Node[]) {
+    // TODO: implement append string
+    for (const element of elements) {
+      this.appendChild(element);
     }
   }
+
+  appendChild(el: Node) {
+    this.children.push(el);
+    this.node.insertChild(el.node, this.node.getChildCount());
+  }
+
 
   public setPosition(position: VUICSSStyleDeclaration["position"]): void {
     switch (position) {
