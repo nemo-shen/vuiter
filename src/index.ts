@@ -8,9 +8,11 @@ const createBox = (index: number) => {
     height: 5,
     borderWidth: 1,
     borderStyle: "round",
+    // flexGrow: 1,
   };
   if (index === 3) {
-    style.marginLeft = 'auto';
+    // style.flexGrow = 2;
+    // style.marginLeft = 'auto';
   }
   const box = new Div({
     style,

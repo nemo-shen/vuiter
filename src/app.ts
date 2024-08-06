@@ -24,6 +24,7 @@ class App {
         height: rows,
         borderWidth: 1,
         display: 'flex',
+        flexDirection: 'row-reverse',
       },
     });
   }

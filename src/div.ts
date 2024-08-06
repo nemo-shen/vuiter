@@ -11,6 +11,7 @@ import Yoga, {
   PositionType,
   Wrap,
   Justify,
+  Align,
 } from "yoga-layout";
 import chalk from "chalk";
 import { BORDER_STYLE } from "./constants";
@@ -26,8 +27,8 @@ export type VUICSSStyleDeclaration = {
   marginLeft?: number | "auto";
   padding: number;
   display?: "flex" /* default */ | "none";
-  flexDirection: "row" /* default */ | "column";
-  alignItems: "start" | "center" | "end";
+  flexDirection: "row" /* default */ | "column" | "row-reverse" | "column-reverse";
+  alignItems: "stretch" /* default */ | "flex-start" | "flex-end" | "center" | "baseline";
   backgroundColor?: string;
   top?: number;
   left?: number;
@@ -45,6 +46,8 @@ export type VUICSSStyleDeclaration = {
     | "space-between"
     | "space-around"
     | "space-evenly";
+  flexBasis?: "auto" /* default*/ | number;
+  flexGrow?: number;
 };
 
 export type Node = Div;
@@ -56,9 +59,10 @@ const DEFAULT_STYLE: VUICSSStyleDeclaration = {
   width: 1,
   height: 1,
   display: "flex",
-  flexWrap: "nowrap",
   flexDirection: "row",
-  alignItems: "start",
+  flexBasis: "auto",
+  flexWrap: "nowrap",
+  alignItems: "stretch",
   justifyContent: "flex-start",
   position: "relative",
   margin: 0,
@@ -105,6 +109,9 @@ class Div {
     this.setFlexDirection(this.style.flexDirection);
     this.setFlexWrap(this.style.flexWrap);
     this.setJustifyContent(this.style.justifyContent);
+    this.setFlexBasis(this.style.flexBasis);
+    this.setAlignItems(this.style.alignItems);
+		this.setFlexGrow(this.style.flexGrow);
   }
 
   public setWidth(value: number) {
@@ -264,8 +271,11 @@ class Div {
       case "column":
         this.node.setFlexDirection(FlexDirection.Column);
         break;
-      default:
-        this.node.setFlexDirection(FlexDirection.Row);
+      case "row-reverse":
+        this.node.setFlexDirection(FlexDirection.RowReverse);
+        break;
+      case "column-reverse":
+        this.node.setFlexDirection(FlexDirection.ColumnReverse);
         break;
     }
   }
@@ -305,6 +315,34 @@ class Div {
         this.node.setJustifyContent(Justify.SpaceEvenly);
         break;
     }
+  }
+
+  public setFlexBasis(flexBasis: VUICSSStyleDeclaration["flexBasis"]) {
+    this.node.setFlexBasis(flexBasis);
+  }
+
+  public setAlignItems(alignItems: VUICSSStyleDeclaration["alignItems"]) {
+    switch (alignItems) {
+      case "stretch":
+        this.node.setAlignItems(Align.Stretch);
+        break;
+      case "flex-start":
+        this.node.setAlignItems(Align.FlexStart);
+        break;
+      case "flex-end":
+        this.node.setAlignItems(Align.FlexEnd);
+        break;
+      case "center":
+        this.node.setAlignItems(Align.Center);
+        break;
+      case "baseline":
+        this.node.setAlignItems(Align.Baseline);
+        break;
+    }
+  }
+
+  public setFlexGrow(flexGrow?: number) {
+    this.node.setFlexGrow(flexGrow);
   }
 }
 
