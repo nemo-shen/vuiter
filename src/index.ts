@@ -14,10 +14,11 @@ import Yoga, {
   Wrap,
   Node as YogaNode,
 } from "yoga-layout";
+import { isDef } from "./utils";
 import process, { stdout } from "node:process";
-import { BORDER_STYLE } from "./contants";
+import { BORDER_STYLE } from "./constants";
 import chalk, { backgroundColors } from "chalk";
-import Div, { VUIDivElement } from "./div";
+import Div, { VUICSSStyleDeclaration, VUIDivElement } from "./div";
 
 const { rows, columns } = process.stdout;
 
@@ -25,50 +26,30 @@ const { rows, columns } = process.stdout;
 const app = new Div({
   style: {
     width: columns,
-    height: rows,
-  },
-});
-const child1 = new Div({
-  style: {
-    width: 10,
-    height: 10,
-    padding: 1,
-    margin: 1,
+    height: 30,
     borderWidth: 1,
-    borderStyle: "bold",
   },
 });
-const child2 = new Div({
-  style: {
-    width: 20,
-    height: 20,
-    padding: 1,
-    margin: 1,
-    borderWidth: 1,
-    borderStyle: "round",
-  },
-});
-const child3 = new Div({
-  style: {
-    width: 40,
-    height: 20,
-    borderWidth: 1,
-    borderStyle: "round",
-    top: 2,
-    left: 3,
-    position: "absolute",
-  },
-});
-app.setChildren(child1, child2, child3);
+const createBox = () => {
+  const box = new Div({
+    style: {
+      width: 10,
+      height: 5,
+      borderWidth: 1,
+      borderStyle: "round",
+    },
+  });
+  return box;
+};
+
+app.setChildren(...Array.from({ length: 3 }, () => createBox()));
 app.node.calculateLayout(undefined, undefined, Direction.LTR);
 
 // 创建二维数组 canvas
-const canvas = new Array(rows).fill(null).map(() => new Array(columns).fill(""));
-
-const isDef = (value: unknown) => value !== undefined;
+const canvas = new Array(app.height).fill(null).map(() => new Array(app.width).fill(""));
 
 // 绘制函数
-function drawNodeToCanvas(el: VUIDivElement, canvas: any[][], style = {}) {
+function drawNodeToCanvas(el: VUIDivElement, canvas: any[][], style = {} as VUICSSStyleDeclaration) {
   const { node } = el;
   const left = node.getComputedLeft();
   const top = node.getComputedTop();
@@ -145,8 +126,8 @@ function drawNodeToCanvas(el: VUIDivElement, canvas: any[][], style = {}) {
     ) {
       if (y >= 0 && y < canvas.length && x >= 0 && x < canvas[y].length) {
         canvas[y][x] = gapText;
-        if (isDef(style.backgroundColors)) {
-          canvas[y][x] = chalk.bgHex(style.backgroundColors)(gapText);
+        if (isDef(style.backgroundColor)) {
+          canvas[y][x] = chalk.bgHex(style.backgroundColor)(gapText);
         }
       }
     }

@@ -1,42 +1,21 @@
-import process from "node:process";
-import Yoga, { FlexDirection, Direction, Edge, Node as YogaNode, PositionType } from "yoga-layout";
+import Yoga, {
+  Display,
+  FlexDirection,
+  Direction,
+  Edge,
+  Node as YogaNode,
+  PositionType,
+} from "yoga-layout";
 import chalk from "chalk";
-import { EDGE_ALL } from "yoga-layout-prebuilt";
-import { BORDER_STYLE } from "./contants";
+import { BORDER_STYLE } from "./constants";
+import { isDef } from "./utils";
 
-const HORIZONTAL_LINE = "━";
-const VERTICAL_LINE = "┃";
-const BORDER_TOP_LEFT = "┏";
-const BORDER_TOP_RIGHT = "┓";
-const BORDER_BOTTOM_LEFT = "┗";
-const BORDER_BOTTOM_RIGHT = "┛";
-
-type PickCSSStyleDeclaration = Pick<
-  CSSStyleDeclaration,
-  | "margin"
-  | "marginTop"
-  | "marginBottom"
-  | "marginLeft"
-  | "marginRight"
-  | "padding"
-  | "paddingTop"
-  | "paddingBottom"
-  | "paddingLeft"
-  | "paddingRight"
-  | "border"
-  | "borderTop"
-  | "borderBottom"
-  | "borderLeft"
-  | "borderRight"
-  | "borderWidth"
-  | "borderStyle"
-  | "borderColor"
->;
-interface VUICSSStyleDeclaration extends PickCSSStyleDeclaration {
-  width: string | number;
-  height: string | number;
-  borderStyle: keyof typeof BORDER_STYLE;
-  display: "flex";
+export type VUICSSStyleDeclaration = {
+  width: number;
+  height: number;
+  margin: number;
+  padding: number;
+  display?: "flex" | "none";
   flexDirection: "row" | "column";
   alignItems: "start" | "center" | "end";
   justifyContent: "center" | "start" | "end";
@@ -45,20 +24,19 @@ interface VUICSSStyleDeclaration extends PickCSSStyleDeclaration {
   left?: number;
   right?: number;
   bottom?: number;
-  position?: "relative" | "absolute" | "static";
+  position: "relative" | "absolute" | "static";
+  borderWidth: number;
+  borderStyle?: keyof typeof BORDER_STYLE;
+  borderColor?: string;
 }
 
 export interface VUIDivElement {
   style?: VUICSSStyleDeclaration;
-  render(): void;
+  node: YogaNode;
+  children: Node[];
 }
 
 type Node = VUIDivElement;
-
-const isString = (value: unknown) =>
-  typeof value === "string" && Object.prototype.toString.call(value) === "[object String]";
-const isNumber = (value: unknown) =>
-  !isNaN(value) && Object.prototype.toString.call(value) === "[object Number]";
 
 /**
  * <div style="width: 100px; height: 100px"></div>
@@ -71,115 +49,186 @@ const DEFAULT_STYLE: VUICSSStyleDeclaration = {
   alignItems: "start",
   justifyContent: "start",
   position: "relative",
+  margin: 0,
+  padding: 0,
+  borderWidth: 0,
 };
 class Div implements VUIDivElement {
-  public style?: VUICSSStyleDeclaration = DEFAULT_STYLE;
-  public node?: YogaNode;
+  public style: VUICSSStyleDeclaration = DEFAULT_STYLE;
+  public node: YogaNode;
   public children: Node[] = [];
 
   get width(): number {
-    if (isNumber(this.style?.width)) {
-      return this.style?.width;
-    }
-    if (isString(this.style?.width)) {
-      return Number((this.style?.width as string).replace("px", ""));
-    }
-    return NaN;
+    return this.style.width;
   }
 
   get height(): number {
-    if (isNumber(this.style?.height)) {
-      return this.style?.height;
-    }
-    if (isString(this.style?.height)) {
-      return Number((this.style?.height as string).replace("px", ""));
-    }
-    return NaN;
+    return this.style.height;
   }
 
-  // <div></div>
   constructor(props: { style?: Partial<VUICSSStyleDeclaration> } = {}) {
     if (props.style) this.style = { ...DEFAULT_STYLE, ...props.style };
     this.node = Yoga.Node.create();
-    this.node.setWidth(this.width);
-    this.node.setHeight(this.height);
-    // TODO: need compatible string like '1px'
-    // borderWidth only display 1px
-    if (+this.style.borderWidth > 0) {
-      this.node.setBorder(Edge.All, 1);
-    }
-    // TODO: need parse border style `${borderWidth} ${borderStyle} [${borderColor}]`
-    // if (this.style.border) {
-    //   this.node.setBorder(Edge.All, 2);
-    // }
-    if (this.style.padding) {
-      this.node.setPadding(Edge.Top, this.style.padding);
-      this.node.setPadding(Edge.Right, this.style.padding);
-      this.node.setPadding(Edge.Bottom, this.style.padding);
-      this.node.setPadding(Edge.Left, this.style.padding);
-    }
-    if (this.style.margin) {
-      this.node.setMargin(Edge.Top, this.style.margin);
-      this.node.setMargin(Edge.Right, this.style.margin);
-      this.node.setMargin(Edge.Bottom, this.style.margin);
-      this.node.setMargin(Edge.Left, this.style.margin);
-    }
-    if (this.style.position) {
-      let positionType;
-      switch (this.style.position) {
-        case "relative":
-          positionType = PositionType.Relative;
-          break;
-        case "absolute":
-          positionType = PositionType.Absolute;
-          break;
-        case "static":
-          positionType = PositionType.Static;
-          break;
-        default:
-          positionType = PositionType.Relative;
-          break;
-      }
-      this.node.setPositionType(positionType);
-      if (this.style.top) this.node.setPosition(Edge.Top, this.style.top);
-      if (this.style.right) this.node.setPosition(Edge.Right, this.style.right);
-      if (this.style.bottom) this.node.setPosition(Edge.Bottom, this.style.bottom);
-      if (this.style.left) this.node.setPosition(Edge.Left, this.style.left);
-    }
-    // if (this.style.marginTop) {
-    //   this.node.setMargin(Edge.Top, this.style.marginTop);
-    // }
-    // if (this.style.marginRight) {
-    //   this.node.setMargin(Edge.Right, this.style.marginRight);
-    // }
-    // if (this.style.marginBottom) {
-    //   this.node.setMargin(Edge.Right, this.style.marginRight);
-    //
-    // }
 
-    this.node.setFlexDirection(FlexDirection.Row);
+    this.setWidth(this.width);
+    this.setHeight(this.height);
 
-    // const child1 = Yoga.Node.create();
-    // child1.setWidth(10);
-    // child1.setHeight(10);
-    // child1.setPadding(Edge.All, 1);
-    // child1.setMargin(Edge.All, 1);
-    // child1.setBorder(Edge.All, 1);
-    // root.insertChild(child1, 0);
+    this.setBorder(this.style.borderWidth, this.style.borderStyle, this.style.borderColor);
+    this.setMargin(this.style.margin);
+    this.setPadding(this.style.padding);
 
-    // const child2 = Yoga.Node.create();
-    // child2.setWidth(20);
-    // child2.setHeight(10);
-    // child2.setPadding(Edge.All, 1);
-    // child2.setMargin(Edge.All, 1);
-    // child2.setBorder(Edge.All, 1);
-    // root.insertChild(child2, 1);
+    this.setPosition(this.style.position);
+    this.setPositionTop(this.style.top);
+    this.setPositionRight(this.style.right);
+    this.setPositionBottom(this.style.bottom);
+    this.setPositionLeft(this.style.left);
+
+    this.setDisplay(this.style.display);
+    this.setFlexDirection(this.style.flexDirection);
+  }
+
+  public setWidth(value: number) {
+    this.node.setWidth(value);
+  }
+
+  public setHeight(value: number) {
+    this.node.setHeight(value);
+  }
+
+  public setBorder(
+    width: number,
+    style: VUICSSStyleDeclaration["borderStyle"],
+    color?: string,
+  ): void {
+    this.node.setBorder(Edge.All, 1);
+  }
+
+  public setMargin(...margin: [p1: number, p2?: number, p3?: number, p4?: number]): void {
+    switch (margin.length) {
+      case 1: // apply to all four sides
+        this.node.setMargin(Edge.All, margin[0]);
+        break;
+      case 2: // top and bottom | left and right
+        this.node.setMargin(Edge.Top, margin[0]);
+        this.node.setMargin(Edge.Bottom, margin[0]);
+        this.node.setMargin(Edge.Left, margin[1]);
+        this.node.setMargin(Edge.Right, margin[1]);
+        break;
+      case 3: // top | left and right | bottom
+        this.node.setMargin(Edge.Top, margin[0]);
+        this.node.setMargin(Edge.Left, margin[1]);
+        this.node.setMargin(Edge.Right, margin[1]);
+        this.node.setMargin(Edge.Bottom, margin[2]);
+        break;
+      case 4: // top | right | bottom | left
+        this.node.setMargin(Edge.Top, margin[0]);
+        this.node.setMargin(Edge.Right, margin[1]);
+        this.node.setMargin(Edge.Bottom, margin[2]);
+        this.node.setMargin(Edge.Left, margin[3]);
+        break;
+    }
+  }
+
+  /**
+   * Set Padding like web. see: https://developer.mozilla.org/en-US/docs/Web/CSS/padding
+   * [number]
+   */
+  public setPadding(...padding: [p1: number, p2?: number, p3?: number, p4?: number]): void {
+    switch (padding.length) {
+      case 1: // apply to all four sides
+        this.node.setPadding(Edge.All, padding[0]);
+        break;
+      case 2: // top and bottom | left and right
+        this.node.setPadding(Edge.Top, padding[0]);
+        this.node.setPadding(Edge.Bottom, padding[0]);
+        this.node.setPadding(Edge.Left, padding[1]);
+        this.node.setPadding(Edge.Right, padding[1]);
+        break;
+      case 3: // top | left and right | bottom
+        this.node.setPadding(Edge.Top, padding[0]);
+        this.node.setPadding(Edge.Left, padding[1]);
+        this.node.setPadding(Edge.Right, padding[1]);
+        this.node.setPadding(Edge.Bottom, padding[2]);
+        break;
+      case 4: // top | right | bottom | left
+        this.node.setPadding(Edge.Top, padding[0]);
+        this.node.setPadding(Edge.Right, padding[1]);
+        this.node.setPadding(Edge.Bottom, padding[2]);
+        this.node.setPadding(Edge.Left, padding[3]);
+        break;
+    }
   }
 
   public setChildren(...elements: Node[]) {
     this.children = elements;
     for (let i = 0; i < elements.length; i++) {
       this.node.insertChild(elements[i].node, i);
+    }
+  }
+
+  public setPosition(position: VUICSSStyleDeclaration["position"]): void {
+    switch (position) {
+      case "relative":
+        this.node.setPositionType(PositionType.Relative);
+        break;
+      case "absolute":
+        this.node.setPositionType(PositionType.Absolute);
+        break;
+      case "static":
+        this.node.setPositionType(PositionType.Static);
+        break;
+      default:
+        this.node.setPositionType(PositionType.Relative);
+        break;
+    }
+  }
+
+  public setPositionTop(value: number | undefined) {
+    if (!isDef(value)) return;
+    if (this.style.position !== "absolute") return;
+    this.node.setPosition(Edge.Top, value);
+  }
+  public setPositionRight(value: number | undefined) {
+    if (!isDef(value)) return;
+    if (this.style.position !== "absolute") return;
+    this.node.setPosition(Edge.Right, value);
+  }
+  public setPositionBottom(value: number | undefined) {
+    if (!isDef(value)) return;
+    if (this.style.position !== "absolute") return;
+    this.node.setPosition(Edge.Bottom, value);
+  }
+  public setPositionLeft(value: number | undefined) {
+    if (!isDef(value)) return;
+    if (this.style.position !== "absolute") return;
+    this.node.setPosition(Edge.Bottom, value);
+  }
+
+  public setDisplay(display: VUICSSStyleDeclaration["display"]): void {
+    switch (display) {
+      case "flex":
+        this.node.setDisplay(Display.Flex);
+        break;
+      case "none":
+        this.node.setDisplay(Display.None);
+        break;
+      default:
+        this.node.setDisplay(Display.Flex);
+        break;
+    }
+  }
+
+  public setFlexDirection(flexDirection: VUICSSStyleDeclaration["flexDirection"]): void {
+    switch (flexDirection) {
+      case "row":
+        this.node.setFlexDirection(FlexDirection.Row);
+        break;
+      case "column":
+        this.node.setFlexDirection(FlexDirection.Column);
+        break;
+      default:
+        this.node.setFlexDirection(FlexDirection.Row);
+        break;
     }
   }
 }
