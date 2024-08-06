@@ -15,7 +15,7 @@ class App {
 
   constructor() {
     let { rows, columns } = process.stdout;
-    // columns = 30; // dev
+    columns = 50; // dev
     rows = 20; // dev
     this.canvas = new Array(rows).fill(null).map(() => new Array(columns).fill(""));
     this.root = new Div({
@@ -23,8 +23,6 @@ class App {
         width: columns,
         height: rows,
         borderWidth: 1,
-        display: 'flex',
-        flexDirection: 'row-reverse',
       },
     });
   }

@@ -48,6 +48,7 @@ export type VUICSSStyleDeclaration = {
     | "space-evenly";
   flexBasis?: "auto" /* default*/ | number;
   flexGrow?: number;
+  flexShrink?: number;
 };
 
 export type Node = Div;
@@ -111,7 +112,8 @@ class Div {
     this.setJustifyContent(this.style.justifyContent);
     this.setFlexBasis(this.style.flexBasis);
     this.setAlignItems(this.style.alignItems);
-		this.setFlexGrow(this.style.flexGrow);
+    this.setFlexGrow(this.style.flexGrow);
+		this.setFlexShrink(this.style.flexShrink);
   }
 
   public setWidth(value: number) {
@@ -343,6 +345,10 @@ class Div {
 
   public setFlexGrow(flexGrow?: number) {
     this.node.setFlexGrow(flexGrow);
+  }
+
+  public setFlexShrink(flexShrink?: number) {
+    this.node.setFlexShrink(flexShrink);
   }
 }
 

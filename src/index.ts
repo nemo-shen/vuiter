@@ -4,13 +4,14 @@ import App from "./app";
 const appLayout = new App();
 const createBox = (index: number) => {
   const style: Partial<VUICSSStyleDeclaration> = {
-    width: 10,
+    width: 20,
     height: 5,
     borderWidth: 1,
     borderStyle: "round",
     // flexGrow: 1,
   };
-  if (index === 3) {
+  if (index === 2) {
+    style.flexShrink = 1;
     // style.flexGrow = 2;
     // style.marginLeft = 'auto';
   }
@@ -20,7 +21,7 @@ const createBox = (index: number) => {
   return box;
 };
 
-appLayout.append(...Array.from({ length: 5 }, (_, index) => createBox(index)));
+appLayout.append(...Array.from({ length: 3 }, (_, index) => createBox(index)));
 appLayout.flow();
 appLayout.paint();
 appLayout.render();
