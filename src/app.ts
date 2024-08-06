@@ -23,6 +23,7 @@ class App {
         width: columns,
         height: rows,
         borderWidth: 1,
+        // flexWrap: 'wrap',
       },
     });
   }

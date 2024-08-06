@@ -1,6 +1,7 @@
 /** ************************************************************************************************
  * element:div
  * 对YogaNode的封装，用于和web的div表现尽量保持统一
+ * unit: 1row 1col
  ************************************************************************************************ */
 import Yoga, {
   Display,
@@ -12,8 +13,8 @@ import Yoga, {
   Wrap,
   Justify,
   Align,
+  Gutter,
 } from "yoga-layout";
-import chalk from "chalk";
 import { BORDER_STYLE } from "./constants";
 import { isDef } from "./utils";
 
@@ -49,6 +50,7 @@ export type VUICSSStyleDeclaration = {
   flexBasis?: "auto" /* default*/ | number;
   flexGrow?: number;
   flexShrink?: number;
+  gap?: number | string /* see: https://developer.mozilla.org/zh-CN/docs/Web/CSS/gap */;
 };
 
 export type Node = Div;
@@ -113,7 +115,8 @@ class Div {
     this.setFlexBasis(this.style.flexBasis);
     this.setAlignItems(this.style.alignItems);
     this.setFlexGrow(this.style.flexGrow);
-		this.setFlexShrink(this.style.flexShrink);
+    this.setFlexShrink(this.style.flexShrink);
+    this.setGap(this.style.gap);
   }
 
   public setWidth(value: number) {
@@ -296,7 +299,7 @@ class Div {
     }
   }
 
-  public setJustifyContent(justifyContent: VUICSSStyleDeclaration["justifyContent"]) {
+  public setJustifyContent(justifyContent: VUICSSStyleDeclaration["justifyContent"]): void {
     switch (justifyContent) {
       case "flex-start":
         this.node.setJustifyContent(Justify.FlexStart);
@@ -319,11 +322,11 @@ class Div {
     }
   }
 
-  public setFlexBasis(flexBasis: VUICSSStyleDeclaration["flexBasis"]) {
+  public setFlexBasis(flexBasis: VUICSSStyleDeclaration["flexBasis"]): void {
     this.node.setFlexBasis(flexBasis);
   }
 
-  public setAlignItems(alignItems: VUICSSStyleDeclaration["alignItems"]) {
+  public setAlignItems(alignItems: VUICSSStyleDeclaration["alignItems"]): void {
     switch (alignItems) {
       case "stretch":
         this.node.setAlignItems(Align.Stretch);
@@ -343,12 +346,26 @@ class Div {
     }
   }
 
-  public setFlexGrow(flexGrow?: number) {
+  public setFlexGrow(flexGrow?: VUICSSStyleDeclaration["flexGrow"]): void {
     this.node.setFlexGrow(flexGrow);
   }
 
-  public setFlexShrink(flexShrink?: number) {
+  public setFlexShrink(flexShrink?: VUICSSStyleDeclaration["flexShrink"]): void {
     this.node.setFlexShrink(flexShrink);
+  }
+
+  public setGap(gap: VUICSSStyleDeclaration["gap"]): void {
+    if (!isDef(gap)) return;
+    const values = String(gap)?.split(" ").map(Number);
+    switch (values.length) {
+      case 1:
+        this.node.setGap(Gutter.All, values[0]);
+        break;
+      case 2:
+        this.node.setGap(Gutter.Row, values[0]);
+        this.node.setGap(Gutter.Column, values[1]);
+        break;
+    }
   }
 }
 

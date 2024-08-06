@@ -11,7 +11,8 @@ const createBox = (index: number) => {
     // flexGrow: 1,
   };
   if (index === 2) {
-    style.flexShrink = 1;
+    // style.gap = 2
+    // style.flexShrink = 1;
     // style.flexGrow = 2;
     // style.marginLeft = 'auto';
   }
