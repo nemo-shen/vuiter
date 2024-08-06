@@ -22,8 +22,10 @@ class App {
       style: {
         width: columns,
         height: rows,
-        // borderWidth: 1,
-        backgroundColor: "#fff",
+        borderWidth: 1,
+        // borderColor: "#646cff",
+        borderStyle: 'round',
+        // backgroundColor: "#bcc0ff",
         padding: 1,
         flexWrap: "wrap",
         gap: 1,
@@ -92,24 +94,28 @@ class App {
 
     for (let y = top; y < top + height; y++) {
       for (let x = left; x < left + width; x++) {
+        let text = "";
         if (y >= 0 && y < canvas.length && x >= 0 && x < canvas[y].length) {
           if (y === top && x === left) {
-            canvas[y][x] = borderStyle.topLeft;
+            text = borderStyle.topLeft;
           } else if (y === top && x === left + width - 1) {
-            canvas[y][x] = borderStyle.topRight;
+            text = borderStyle.topRight;
           } else if (y === top + height - 1 && x === left) {
-            canvas[y][x] = borderStyle.bottomLeft;
+            text = borderStyle.bottomLeft;
           } else if (y === top + height - 1 && x === left + width - 1) {
-            canvas[y][x] = borderStyle.bottomRight;
+            text = borderStyle.bottomRight;
           } else if (
             (y > top && y < top + height - 1 && x === left) ||
             (y > top && y < top + height - 1 && x === left + width - 1)
           ) {
-            canvas[y][x] = borderStyle.vertical;
+            text = borderStyle.vertical;
           } else {
-            canvas[y][x] = borderStyle.horizontal;
+            text = borderStyle.horizontal;
           }
         }
+        // canvas[y][x] = text;
+        canvas[y][x] = el.style.borderColor ? chalk.hex(el.style.borderColor)(text)
+          : text;
       }
     }
 
