@@ -9,6 +9,8 @@ import Yoga, {
   Edge,
   Node as YogaNode,
   PositionType,
+  Wrap,
+  Justify,
 } from "yoga-layout";
 import chalk from "chalk";
 import { BORDER_STYLE } from "./constants";
@@ -18,20 +20,31 @@ export type VUICSSStyleDeclaration = {
   width: number;
   height: number;
   margin: number;
+  marginTop?: number | "auto";
+  marginRight?: number | "auto";
+  marginBottom?: number | "auto";
+  marginLeft?: number | "auto";
   padding: number;
-  display?: "flex" | "none";
-  flexDirection: "row" | "column";
+  display?: "flex" /* default */ | "none";
+  flexDirection: "row" /* default */ | "column";
   alignItems: "start" | "center" | "end";
-  justifyContent: "center" | "start" | "end";
   backgroundColor?: string;
   top?: number;
   left?: number;
   right?: number;
   bottom?: number;
-  position: "relative" | "absolute" | "static";
+  position: "relative" /* default */ | "absolute" | "static";
   borderWidth: number;
   borderStyle?: keyof typeof BORDER_STYLE;
   borderColor?: string;
+  flexWrap?: "nowrap" /* default */ | "wrap" | "wrap-reverse";
+  justifyContent?:
+    | "flex-start" /* default */
+    | "flex-end"
+    | "center"
+    | "space-between"
+    | "space-around"
+    | "space-evenly";
 };
 
 export type Node = Div;
@@ -43,9 +56,10 @@ const DEFAULT_STYLE: VUICSSStyleDeclaration = {
   width: 1,
   height: 1,
   display: "flex",
+  flexWrap: "nowrap",
   flexDirection: "row",
   alignItems: "start",
-  justifyContent: "start",
+  justifyContent: "flex-start",
   position: "relative",
   margin: 0,
   padding: 0,
@@ -72,7 +86,13 @@ class Div {
     this.setHeight(this.height);
 
     this.setBorder(this.style.borderWidth, this.style.borderStyle, this.style.borderColor);
+
     this.setMargin(this.style.margin);
+    this.setMarginTop(this.style.marginTop);
+    this.setMarginRight(this.style.marginRight);
+    this.setMarginBottom(this.style.marginBottom);
+    this.setMarginLeft(this.style.marginLeft);
+
     this.setPadding(this.style.padding);
 
     this.setPosition(this.style.position);
@@ -83,6 +103,8 @@ class Div {
 
     this.setDisplay(this.style.display);
     this.setFlexDirection(this.style.flexDirection);
+    this.setFlexWrap(this.style.flexWrap);
+    this.setJustifyContent(this.style.justifyContent);
   }
 
   public setWidth(value: number) {
@@ -127,6 +149,19 @@ class Div {
     }
   }
 
+  public setMarginTop(value: VUICSSStyleDeclaration["marginTop"]) {
+    this.node.setMargin(Edge.Top, value ?? 0);
+  }
+  public setMarginRight(value: VUICSSStyleDeclaration["marginRight"]) {
+    this.node.setMargin(Edge.Right, value ?? 0);
+  }
+  public setMarginBottom(value: VUICSSStyleDeclaration["marginBottom"]) {
+    this.node.setMargin(Edge.Bottom, value ?? 0);
+  }
+  public setMarginLeft(value: VUICSSStyleDeclaration["marginLeft"]) {
+    this.node.setMargin(Edge.Left, value ?? 0);
+  }
+
   /**
    * Set Padding like web. see: https://developer.mozilla.org/en-US/docs/Web/CSS/padding
    * [number]
@@ -168,7 +203,6 @@ class Div {
     this.children.push(el);
     this.node.insertChild(el.node, this.node.getChildCount());
   }
-
 
   public setPosition(position: VUICSSStyleDeclaration["position"]): void {
     switch (position) {
@@ -232,6 +266,43 @@ class Div {
         break;
       default:
         this.node.setFlexDirection(FlexDirection.Row);
+        break;
+    }
+  }
+
+  public setFlexWrap(flexWrap: VUICSSStyleDeclaration["flexWrap"]): void {
+    switch (flexWrap) {
+      case "nowrap":
+        this.node.setFlexWrap(Wrap.NoWrap);
+        break;
+      case "wrap":
+        this.node.setFlexWrap(Wrap.Wrap);
+        break;
+      case "wrap-reverse":
+        this.node.setFlexWrap(Wrap.WrapReverse);
+        break;
+    }
+  }
+
+  public setJustifyContent(justifyContent: VUICSSStyleDeclaration["justifyContent"]) {
+    switch (justifyContent) {
+      case "flex-start":
+        this.node.setJustifyContent(Justify.FlexStart);
+        break;
+      case "flex-end":
+        this.node.setJustifyContent(Justify.FlexEnd);
+        break;
+      case "center":
+        this.node.setJustifyContent(Justify.Center);
+        break;
+      case "space-between":
+        this.node.setJustifyContent(Justify.SpaceBetween);
+        break;
+      case "space-around":
+        this.node.setJustifyContent(Justify.SpaceAround);
+        break;
+      case "space-evenly":
+        this.node.setJustifyContent(Justify.SpaceEvenly);
         break;
     }
   }

@@ -3,7 +3,7 @@
  * 可以将他理解为html
  ************************************************************************************************ */
 
-import { Direction, Edge } from "yoga-layout";
+import { Direction, Edge, FlexDirection } from "yoga-layout";
 import Div, { Node, VUICSSStyleDeclaration } from "./div";
 import { BORDER_STYLE } from "./constants";
 import { isDef } from "./utils";
@@ -15,6 +15,7 @@ class App {
 
   constructor() {
     let { rows, columns } = process.stdout;
+    // columns = 30; // dev
     rows = 20; // dev
     this.canvas = new Array(rows).fill(null).map(() => new Array(columns).fill(""));
     this.root = new Div({
@@ -22,6 +23,7 @@ class App {
         width: columns,
         height: rows,
         borderWidth: 1,
+        display: 'flex',
       },
     });
   }
