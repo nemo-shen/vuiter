@@ -6,8 +6,8 @@ const createBox = (index: number) => {
   const style: Partial<VUICSSStyleDeclaration> = {
     width: 20,
     height: 5,
-    borderWidth: 1,
-    borderStyle: "round",
+    // borderWidth: 1,
+    // borderStyle: "round",
     // flexGrow: 1,
   };
   if (index === 2) {

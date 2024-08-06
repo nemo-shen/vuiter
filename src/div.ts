@@ -132,7 +132,9 @@ class Div {
     style: VUICSSStyleDeclaration["borderStyle"],
     color?: string,
   ): void {
-    this.node.setBorder(Edge.All, 1);
+    if (width > 0) {
+      this.node.setBorder(Edge.All, 1);
+    }
   }
 
   public setMargin(...margin: [p1: number, p2?: number, p3?: number, p4?: number]): void {

@@ -22,8 +22,11 @@ class App {
       style: {
         width: columns,
         height: rows,
-        borderWidth: 1,
-        // flexWrap: 'wrap',
+        // borderWidth: 1,
+        backgroundColor: "#fff",
+        padding: 1,
+        flexWrap: "wrap",
+        gap: 1,
       },
     });
   }
@@ -114,6 +117,9 @@ class App {
       for (let x = left + borderLeft; x < left + width - borderRight; x++) {
         if (y >= 0 && y < canvas.length && x >= 0 && x < canvas[y].length) {
           canvas[y][x] = gapText;
+          if (isDef(style.backgroundColor)) {
+            canvas[y][x] = chalk.bgHex(style.backgroundColor)(gapText);
+          }
         }
       }
     }
