@@ -1,6 +1,7 @@
 import Div, { VUICSSStyleDeclaration } from "./div";
 import App from "./app";
 
+// dom -> render function -> new Div()
 const appLayout = new App();
 const createBox = (index: number) => {
   const style: Partial<VUICSSStyleDeclaration> = {
