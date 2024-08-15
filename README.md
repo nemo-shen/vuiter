@@ -1,18 +1,9 @@
-```html
-<div>
-  <div>
-    -> 占据一行的div
-    <div style="width: 100%; height: 100%">
-      <div>
-        -> 全屏的div
-        <div style="width: 100%; height: 100%"><div>-> 全屏的div</div></div>
-      </div>
-    </div>
-  </div>
-</div>
-```
+# Vuiter
 
-# Relation
+Terminal GUI similar [vue-termui](https://github.com/vue-terminal/vue-termui).
+base on Vue3
+
+## Relation
 
 - [ansi-escapes](https://github.com/sindresorhus/ansi-escapes)
 - [chalk](https://github.com/chalk/chalk)
