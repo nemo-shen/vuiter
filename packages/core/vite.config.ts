@@ -7,7 +7,7 @@ export default defineConfig({
   },
   build: {
     minify: false,
-    target: 'node16',
+    target: 'node18',
     outDir: 'dist',
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),

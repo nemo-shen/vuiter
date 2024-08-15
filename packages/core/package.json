@@ -2,6 +2,11 @@
   "name": "vuiter",
   "type": "module",
   "packageManager": "pnpm@9.6.0",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    }
+  },
   "scripts": {
     "ts-node": "ts-node",
     "dev": "vite build --watch",
