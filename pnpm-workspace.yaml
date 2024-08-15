@@ -1,0 +1,17 @@
+packages:
+  - "packages/*"
+  - "templates/*"
+
+catalog:
+  "@vue/compiler-core": ^3.4.35
+  "@vue/reactivity": ^3.4.37
+  "@vue/runtime-core": ^3.4.37
+  "@types/node": ^20.14.15
+  typescript: ^5.5.4
+  prettier: ^3.3.3
+  eslint-config-prettier: ^9.1.0
+  postinstall-postinstall: ^2.1.0
+  ts-node: ^10.9.2
+  tslib: ^2.6.3
+  vue: ^3.4.31
+  vite: ^5.3.5
