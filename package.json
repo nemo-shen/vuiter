@@ -6,7 +6,7 @@
   },
   "scripts": {
     "dev": "node ./scripts/dev.js",
-    "build": "pnpm -r --filter={vuiter,my-vuiter-app} run build"
+    "build": "node ./scripts/build.js"
   },
   "dependencies": {
     "@vue/compiler-core": "^3.4.35",
