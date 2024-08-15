@@ -5,8 +5,8 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "dev": "vite build --watch",
-    "build": "vite build"
+    "dev": "node ./scripts/dev.js",
+    "build": "pnpm -r --filter={vuiter,my-vuiter-app} run build"
   },
   "dependencies": {
     "@vue/compiler-core": "^3.4.35",
