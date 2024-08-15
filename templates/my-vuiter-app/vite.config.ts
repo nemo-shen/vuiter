@@ -7,7 +7,10 @@ export default defineConfig({
     target: "node18",
     rollupOptions: {
       input: "src/main.ts",
-      external: ["vue"],
+      external: [
+        "vue",
+        'chalk',
+      ],
       output: {
         entryFileNames: "main.js",
         globals: {
