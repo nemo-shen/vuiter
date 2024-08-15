@@ -24,7 +24,7 @@ class App {
         height: rows,
         borderWidth: 1,
         // borderColor: "#646cff",
-        borderStyle: 'round',
+        borderStyle: "round",
         // backgroundColor: "#bcc0ff",
         padding: 1,
         flexWrap: "wrap",
@@ -114,8 +114,7 @@ class App {
           }
         }
         // canvas[y][x] = text;
-        canvas[y][x] = el.style.borderColor ? chalk.hex(el.style.borderColor)(text)
-          : text;
+        canvas[y][x] = el.style.borderColor ? chalk.hex(el.style.borderColor)(text) : text;
       }
     }
 
