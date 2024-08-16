@@ -1,6 +1,5 @@
 import { resolve } from "path";
 import { defineConfig, UserConfig } from "vite";
-import { nodeResolve } from "@rollup/plugin-node-resolve";
 
 export default defineConfig({
   esbuild: {
@@ -20,9 +19,4 @@ export default defineConfig({
       external: ["node:process", "node:readline", "chalk"],
     },
   },
-  plugins: [
-    nodeResolve({
-      exportConditions: ["node"],
-    }),
-  ],
 }) satisfies UserConfig;
