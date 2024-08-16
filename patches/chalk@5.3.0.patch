@@ -1,0 +1,14 @@
+diff --git a/package.json b/package.json
+index 3c500105bcbf25bf2f7f6790b9db67b993f65459..d835c83fab7062912c256b64dcaae940cd82168a 100644
+--- a/package.json
++++ b/package.json
+@@ -11,8 +11,7 @@
+ 	"imports": {
+ 		"#ansi-styles": "./source/vendor/ansi-styles/index.js",
+ 		"#supports-color": {
+-			"node": "./source/vendor/supports-color/index.js",
+-			"default": "./source/vendor/supports-color/browser.js"
++			"default": "./source/vendor/supports-color/index.js"
+ 		}
+ 	},
+ 	"types": "./source/index.d.ts",
