@@ -1,10 +1,14 @@
 {
   "name": "vuiter",
   "type": "module",
+  "files": ["dist"],
+  "main": "./dist/vuiter.umd.cjs",
+  "module": "./dist/vuiter.js",
   "packageManager": "pnpm@9.6.0",
   "exports": {
     ".": {
-      "import": "./dist/index.js"
+      "import": "./dist/vuiter.js",
+      "require": "./dist/vuiter.umd.cjs"
     }
   },
   "scripts": {

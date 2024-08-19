@@ -15,7 +15,7 @@ export const createApp = (rootComponent: Component) => {
   const { mount } = app;
   const newApp: any = app;
   newApp.mount = () => {
-    console.log("nemo 99999 mount");
+    console.log("hhhhhhhhhhhhhhhhhhhjjjjjj.....h");
     mount(root);
   };
   return newApp;

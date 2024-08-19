@@ -3,7 +3,10 @@ import { defineConfig, UserConfig } from "vite";
 
 export default defineConfig({
   esbuild: {
-    target: "node16",
+    target: "node18",
+  },
+  ssr: {
+    noExternal: ["chalk"],
   },
   build: {
     minify: false,
@@ -12,11 +15,10 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
       name: "Vuiter",
-      fileName: (format) => "index.js",
-      formats: ["es"],
+      fileName: 'vuiter',
     },
     rollupOptions: {
-      external: ["node:process", "node:readline", "chalk"],
+      external: ["node:process", "node:os", "node:tty"],
     },
   },
 }) satisfies UserConfig;

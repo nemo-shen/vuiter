@@ -5,9 +5,9 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "dev": "pnpm run --filter vuiter dev",
+    "dev:core": "pnpm run --filter vuiter dev",
     "dev:template": "pnpm run --filter my-vuiter-app dev",
-    "build": "pnpm run --filter vuiter build",
+    "build:core": "pnpm run --filter vuiter build",
     "build:template": "pnpm run --filter my-vuiter-app build"
   },
   "dependencies": {
