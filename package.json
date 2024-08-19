@@ -5,8 +5,10 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "dev": "node ./scripts/dev.js",
-    "build": "node ./scripts/build.js"
+    "dev:core": "pnpm run --filter vuiter dev",
+    "dev:template": "pnpm run --filter my-vuiter-app dev",
+    "build:core": "pnpm run --filter vuiter build",
+    "build:template": "pnpm run --filter my-vuiter-app build"
   },
   "dependencies": {
     "@vue/compiler-core": "^3.4.35",

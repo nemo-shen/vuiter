@@ -1,5 +1,6 @@
-export const BORDER_STYLE = {
-  soild: {
+import { BORDER_STYLE } from './constants';
+const BORDER_STYLE = {
+  solid: {
     topLeft: "┌",
     topRight: "┐",
     bottomLeft: "└",
@@ -31,12 +32,11 @@ export const BORDER_STYLE = {
     horizontal: "─",
     vertical: "│",
   },
-  dotted: {
-    topLeft: "😂",
-    topRight: "😂",
-    bottomLeft: "😂",
-    bottomRight: "😂",
-    horizontal: "😂",
-    vertical: "😂",
-  },
 };
+
+type SupportBorderStyleTypes = keyof typeof BORDER_STYLE;
+
+export {
+  type SupportBorderStyleTypes,
+  BORDER_STYLE,
+}
