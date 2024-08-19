@@ -1,0 +1,22 @@
+{
+  "rules": {
+    "typescript:S3776": {
+      "level": "on",
+      "parameters": {
+        "threshold": 1
+      }
+    },
+    "typescript:S1541": {
+      "level": "on",
+      "parameters": {
+        "maximumFunctionComplexityThreshold": 1
+      }
+    }
+  },
+  "exclusions": [
+    "**/node_modules/**",
+    "**/bower_components/**",
+    "**/dist/**",
+    "**/build/**"
+  ]
+}

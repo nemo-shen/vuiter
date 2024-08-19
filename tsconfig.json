@@ -11,7 +11,7 @@
     "esModuleInterop": true,
     "composite": true,
     "skipLibCheck": true,
-    "lib": ["esnext"],
+    "lib": ["dom", "esnext"],
     "paths": {
       "vuiter": ["packages/core/src/index.ts"]
     }
