@@ -14,3 +14,5 @@ base on Vue3
 - [cheerio](https://github.com/cheeriojs/cheerio)
 - [ink](https://github.com/vadimdemedes/ink)
 - [terminal-kit](https://github.com/cronvel/terminal-kit)
+- [Inquirer.js](https://github.com/SBoudrias/Inquirer.js)
+- [commander.js](https://github.com/tj/commander.js)

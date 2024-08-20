@@ -1,10 +1,10 @@
 import { createRenderer } from "@vue/runtime-core";
 import { createApp } from 'vuiter';
-console.log('nemo in9888889 my-vuiter-app in j');
+// console.log('nemo in9888889 my-vuiter-app in j');
 // import { patchProp } from "./patchProp";
 // import { nodeOps } from "./nodeOps";
 
-// import App from "./App.vue";
+import App from "./App.vue";
 // import { VUIElement, VUINode } from "./nodeOps";
 
 // const extend = Object.assign;
@@ -27,4 +27,4 @@ console.log('nemo in9888889 my-vuiter-app in j');
 //   return newApp;
 // };
 
-createApp().mount();
+createApp(App).mount();
