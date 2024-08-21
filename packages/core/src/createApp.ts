@@ -1,7 +1,34 @@
 import type { Component, DefineComponent, PropType } from "@vue/runtime-core";
-import { createRenderer, defineComponent, h } from "@vue/runtime-core";
+import { createRenderer, defineComponent, h, onMounted } from "@vue/runtime-core";
 import { patchProp } from "./patchProp";
 import { nodeOps, VUIElement, VUINode } from "./nodeOps";
+import App from "./app";
+import Div, { VUICSSStyleDeclaration } from "./div";
+
+// ------------ test code ------------
+const appLayout = new App();
+const createBox = (index: number) => {
+  const style: Partial<VUICSSStyleDeclaration> = {
+    width: 20,
+    height: 5,
+    borderWidth: 1,
+    // borderStyle: "round",
+    // flexGrow: 1,
+  };
+  if (index === 2) {
+    // style.gap = 2
+    // style.flexShrink = 1;
+    // style.flexGrow = 2;
+    // style.marginLeft = 'auto';
+  }
+  const box = new Div({
+    style,
+  });
+  return box;
+};
+
+appLayout.append(...Array.from({ length: 3 }, (_, index) => createBox(index)));
+// ------------ test code ------------
 
 const extend = Object.assign;
 
@@ -11,9 +38,11 @@ const { render: baseRender, createApp: baseCreateApp } = createRenderer<VUINode,
 const Comp = defineComponent({
   render() {
     console.log(123012301203);
-    return 'Hello World';
+    return "Hello World";
   },
 });
+
+// 为什么要给她包一层是因为我们要处理一些事情，比如重新渲染之类的事情
 export const VUIApp = defineComponent({
   name: "VUIRoot",
   props: {
@@ -21,113 +50,31 @@ export const VUIApp = defineComponent({
       type: Object as PropType<DefineComponent>,
       required: true,
     },
-
-    // we need this as a prop instead of useStdout because we need to define the write function here based on the last final render output
-    // stdout: {
-    //   type: Object as PropType<NodeJS.WriteStream>,
-    //   required: true,
-    // },
-    // swapScreens: Boolean,
   },
   setup(props, { attrs }) {
-    //     const log = useLog()
+    onMounted(() => {
+      // 在onMounted中处理yogaNode，然后render出来
+      console.log("onMounted");
 
-    //     const { stdout } = props
+      appLayout.flow();
+      appLayout.paint();
+      appLayout.render();
+    });
 
-    //     const writeToStdout: NodeJS.WriteStream['write'] = (...args) => {
-    //       log.clear()
-    //       // @ts-expect-error: args fails for some reason
-    //       const ret = stdout.write.apply(stdout, args)
-    //       log(lastOutput)
-    //       return ret
-    //     }
-
-    //     provide(stdoutSymbol, { stdout, write: writeToStdout })
-
-    //     const rootNode = useRootNode()
-
-    //     let lastOutput: string = ''
-
-    //     function renderTuiApp() {
-    //       // console.log('need update', i?.root.vnode.el)
-    //       const { output, outputHeight, staticOutput } = renderRoot(
-    //         rootNode,
-    //         stdout.columns || 80
-    //       )
-
-    //       // If <Static> output isn't empty, it means new children have been added to it
-    //       const hasStaticOutput = staticOutput && staticOutput !== '\n'
-
-    //       // console.log('update', { hasStaticOutput })
-
-    //       if (outputHeight >= stdout.rows || props.swapScreens) {
-    //         stdout.write(
-    //           ansiEscapes.cursorTo(0, 0) +
-    //             ansiEscapes.eraseDown +
-    //             /* fullStaticOutput + */ output
-    //         )
-
-    //         lastOutput = output
-
-    //         return
-    //       }
-
-    //       if (!hasStaticOutput && output !== lastOutput) {
-    //         log(output)
-    //       }
-
-    //       lastOutput = output
-    //     }
-
-    //     let interval: NodeJS.Timer
-    //     let needsUpdate = false
-    //     const renderOnce = inject(renderOnceSymbol, false)
-    //     onMounted(() => {
-    //       if (!renderOnce) {
-    //         interval = setInterval(() => {
-    //           if (needsUpdate) {
-    //             renderTuiApp()
-    //             needsUpdate = false
-    //           }
-    //         }, 32)
-    //         stdout.on('resize', scheduleUpdate)
-    //       }
-    //       renderTuiApp()
-    //     })
-
-    //     onUnmounted(() => {
-    //       clearInterval(interval)
-    //       stdout.off('resize', scheduleUpdate)
-    //     })
-
-    //     function scheduleUpdate() {
-    //       needsUpdate = true
-    //     }
-    //     provide(scheduleUpdateSymbol, scheduleUpdate)
-
-    //     onUpdated(scheduleUpdate)
-
-    //     onErrorCaptured((error, target) => {
-    //       debugger
-    //       console.error('Captured Error')
-    //       console.error(error)
-    //       console.log(target)
-    //     })
-
-    return () => h(props.root, attrs);
+    return () => h(props.root /* 这个root是外部开发传入的根组件 */, attrs);
   },
 });
 
 export const createApp = (rootComponent: Component) => {
-  const root = nodeOps.createElement("div");
+  const body = nodeOps.createElement("div");
   // const rootContainer = nodeOps.createElement("div");
   const app = baseCreateApp(VUIApp, {
-    root: Comp,
+    root: rootComponent, // 开发者的根节点应该作为vuiter app 的子节点
   });
   const { mount } = app;
   const newApp: any = app;
   newApp.mount = () => {
-    mount(root);
+    mount(body); // 实际上这里是vuiter内部在帮开发者完成 mount挂载 我们这里简单弄了一个div的组件去挂载
   };
   return newApp;
 };
