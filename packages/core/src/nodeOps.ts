@@ -1,40 +1,49 @@
-import { markRaw } from "@vue/reactivity";
+export type VuiNode = VuiElement | VuiText | VuiComment;
 
-export enum VUINodeTypes {
-  TEXT = "text",
-  ELEMENT = "element",
-  COMMENT = "comment",
+const Node = {
+  ELEMENT_NODE: 1,
+  TEXT_NODE: 3,
+  COMMENT_NODE: 8,
 }
-
-export interface VUIElement {
-  id: number;
-  type: VUINodeTypes.ELEMENT;
-  parentNode: VUIElement | null;
-  tag: string;
-  children: VUINode[];
+export class VuiElement {
+  nodeType = Node.ELEMENT_NODE;
+  parentNode: VuiElement | null;
+  tagName: string;
+  children: VuiNode[];
   props: Record<string, any>;
-  eventListeners: Record<string, Function | Function[]> | null;
+
+  constructor(tagName = "div") {
+    this.parentNode = null;
+    this.tagName = tagName;
+    this.children = [];
+    this.props = {};
+  }
+}
+export class VuiText /* extends Text */ {
+  data: string;
+  type = Node.TEXT_NODE;
+  parentNode: VuiElement | null;
+
+  constructor(data: string) {
+    this.data = data;
+    this.parentNode = null;
+  }
 }
 
-export interface VUIText {
-  id: number;
-  type: VUINodeTypes.TEXT;
-  parentNode: VUIElement | null;
-  text: string;
-}
+class VuiComment {
+  type = Node.COMMENT_NODE;
+  parentNode: VuiElement | null;
+  data: string;
 
-export interface VUIComment {
-  id: number;
-  type: VUINodeTypes.COMMENT;
-  parentNode: VUIElement | null;
-  text: string;
+  constructor(data: string) {
+    this.data = data;
+    this.parentNode = null;
+  }
 }
-
-export type VUINode = VUIElement | VUIText | VUIComment;
 
 let nodeId: number = 0;
 
-const insert = (child: VUINode, parent: VUIElement, ref?: VUINode | null): void => {
+const insert = (child: VuiNode, parent: VuiElement, ref?: VuiNode | null): void => {
   let refIndex;
   if (ref) {
     refIndex = parent.children.indexOf(ref);
@@ -54,7 +63,7 @@ const insert = (child: VUINode, parent: VUIElement, ref?: VUINode | null): void 
     child.parentNode = parent;
   }
 };
-const remove = (child: VUINode): void => {
+const remove = (child: VuiNode): void => {
   const parent = child.parentNode;
   if (parent) {
     const i = parent.children.indexOf(child);
@@ -68,43 +77,19 @@ const remove = (child: VUINode): void => {
     child.parentNode = null;
   }
 };
-const createElement = (tag: string): VUIElement => {
-  const node: VUIElement = {
-    id: nodeId++,
-    type: VUINodeTypes.ELEMENT,
-    tag,
-    children: [],
-    props: {},
-    parentNode: null,
-    eventListeners: null,
-  };
-  markRaw(node);
-  return node;
+const createElement = (tag: string): VuiElement => {
+  return new VuiElement(tag);
 };
-const createText = (text: string): VUINode => {
-  const node: VUIText = {
-    id: nodeId++,
-    type: VUINodeTypes.TEXT,
-    text,
-    parentNode: null,
-  };
-  markRaw(node);
-  return node;
+const createText = (data: string): VuiNode => {
+  return new VuiText(data);
 };
-const createComment = (text: string): VUINode => {
-  const node: VUIComment = {
-    id: nodeId++,
-    type: VUINodeTypes.COMMENT,
-    text,
-    parentNode: null,
-  };
-  markRaw(node);
-  return node;
+const createComment = (data: string): VuiComment => {
+  return new VuiComment(data);
 };
-const setText = (node: VUIText, text: string): void => {
-  node.text = text;
+const setText = (node: VuiText, text: string): void => {
+  node.data = text;
 };
-const setElementText = (el: VUIElement, text: string): void => {
+const setElementText = (el: VuiElement, text: string): void => {
   el.children.forEach((c) => {
     c.parentNode = null;
   });
@@ -112,20 +97,13 @@ const setElementText = (el: VUIElement, text: string): void => {
   if (!text) {
     el.children = [];
   } else {
-    el.children = [
-      {
-        id: nodeId++,
-        type: VUINodeTypes.TEXT,
-        text,
-        parentNode: el,
-      },
-    ];
+    el.children = [new VuiComment(text)];
   }
 };
-const parentNode = (node: VUINode): VUIElement | null => {
+const parentNode = (node: VuiNode): VuiElement | null => {
   return node.parentNode;
 };
-const nextSibling = (node: VUINode): VUINode | null => {
+const nextSibling = (node: VuiNode): VuiNode | null => {
   const parent = node.parentNode;
   if (!parent) {
     return null;
