@@ -27,6 +27,7 @@ const createBox = (index: number) => {
   return box;
 };
 
+// TODO: 这里要处理子节点的嵌套
 appLayout.append(...Array.from({ length: 3 }, (_, index) => createBox(index)));
 // ------------ test code ------------
 
@@ -56,6 +57,10 @@ export const VUIApp = defineComponent({
       // 在onMounted中处理yogaNode，然后render出来
       console.log("onMounted");
 
+      /**
+       * 大概知道逻辑了，就是nodeOps的时候就已经挂载好了全部的yogaNode
+       * 在onMounted的时候只不过是把布局好的内容渲染出来
+       */
       appLayout.flow();
       appLayout.paint();
       appLayout.render();

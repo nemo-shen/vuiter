@@ -1,86 +1,125 @@
-export type VuiNode = VuiElement | VuiText | VuiComment;
+import { Node as YogaNode } from "yoga-layout";
 
-const Node = {
-  ELEMENT_NODE: 1,
-  TEXT_NODE: 3,
-  COMMENT_NODE: 8,
+interface Node {
+  /**
+   * Returns the children.
+   *
+   * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Node/childNodes)
+   */
+  childNodes: Node[];
+  /**
+   * Returns the parent.
+   *
+   * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Node/parentNode)
+   */
+  parentNode: Node | null;
+  /**
+   * Returns the next sibling.
+   *
+   * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Node/nextSibling)
+   */
+  nextSibling: Node | null;
+  /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Node/textContent) */
+  textContent: string | null;
+
+  /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Node/insertBefore) */
+  insertBefore<T extends Node>(node: T, child: Node | null): T;
+  /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Node/removeChild) */
+  removeChild<T extends Node>(child: T): T;
+
+  ELEMENT_NODE: 1;
+  TEXT_NODE: 3;
+  COMMENT_NODE: 8;
 }
-export class VuiElement {
+
+class Node implements Node {
+  childNodes: Node[] = [];
+  parentNode: Node | null = null;
+  textContent: string | null = null;
+
+  insertBefore<T extends Node>(node: T, child: Node | null = null): T {
+    if (child) {
+      const index = this.childNodes.indexOf(child);
+      if (index !== -1) {
+        node.nextSibling = child;
+        this.childNodes.splice(index, 0, node);
+      }
+    } else {
+      this.childNodes.push(node);
+    }
+    return node;
+  }
+
+  removeChild<T extends Node>(child: T): T {
+    const index = this.childNodes.indexOf(child);
+    if (index !== -1) {
+      this.childNodes.splice(index, 1);
+      if (index > 1) {
+        this.childNodes[index - 1].nextSibling = this.childNodes[index] || null;
+      }
+    }
+    return child;
+  }
+
+  static ELEMENT_NODE = 1;
+  static TEXT_NODE = 3;
+  static COMMENT_NODE = 8;
+}
+
+class VuiElement extends Node {
   nodeType = Node.ELEMENT_NODE;
   parentNode: VuiElement | null;
   tagName: string;
-  children: VuiNode[];
   props: Record<string, any>;
+  yogaNode: YogaNode | null;
 
   constructor(tagName = "div") {
+    super();
     this.parentNode = null;
     this.tagName = tagName;
-    this.children = [];
     this.props = {};
+    this.yogaNode = null;
   }
 }
-export class VuiText /* extends Text */ {
+class VuiText extends Node {
   data: string;
   type = Node.TEXT_NODE;
   parentNode: VuiElement | null;
+  yogaNode: YogaNode | null;
 
   constructor(data: string) {
+    super();
     this.data = data;
     this.parentNode = null;
+    this.yogaNode = null;
   }
 }
 
-class VuiComment {
+class VuiComment extends Node {
   type = Node.COMMENT_NODE;
   parentNode: VuiElement | null;
   data: string;
 
   constructor(data: string) {
+    super();
     this.data = data;
     this.parentNode = null;
   }
 }
 
-let nodeId: number = 0;
-
-const insert = (child: VuiNode, parent: VuiElement, ref?: VuiNode | null): void => {
-  let refIndex;
-  if (ref) {
-    refIndex = parent.children.indexOf(ref);
-    if (refIndex === -1) {
-      console.error("ref: ", ref);
-      console.error("parent: ", parent);
-      throw new Error("ref is not a child of parent");
-    }
-  }
-  remove(child);
-  refIndex = ref ? parent.children.indexOf(ref) : -1;
-  if (refIndex === -1) {
-    parent.children.push(child);
-    child.parentNode = parent;
-  } else {
-    parent.children.splice(refIndex, 0, child);
-    child.parentNode = parent;
-  }
+const insert = (child: Node, parent: Node, ref: Node | null = null): void => {
+  parent.insertBefore(child, ref);
 };
-const remove = (child: VuiNode): void => {
+const remove = (child: Node): void => {
   const parent = child.parentNode;
   if (parent) {
-    const i = parent.children.indexOf(child);
-    if (i > -1) {
-      parent.children.splice(i, 1);
-    } else {
-      console.error("target: ", child);
-      console.error("parent: ", parent);
-      throw Error("target is not a childNode of parent");
-    }
-    child.parentNode = null;
+    parent.removeChild(child);
   }
 };
 const createElement = (tag: string): VuiElement => {
   return new VuiElement(tag);
 };
-const createText = (data: string): VuiNode => {
+const createText = (data: string): VuiText => {
   return new VuiText(data);
 };
 const createComment = (data: string): VuiComment => {
@@ -90,26 +129,21 @@ const setText = (node: VuiText, text: string): void => {
   node.data = text;
 };
 const setElementText = (el: VuiElement, text: string): void => {
-  el.children.forEach((c) => {
-    c.parentNode = null;
-  });
+  el.textContent = text;
 
-  if (!text) {
-    el.children = [];
-  } else {
-    el.children = [new VuiComment(text)];
+  el.childNodes.forEach((child) => {
+    el.removeChild(child);
+  })
+
+  if (text) {
+    el.insertBefore(new VuiText(text));
   }
 };
-const parentNode = (node: VuiNode): VuiElement | null => {
+const parentNode = (node: Node): Node | null => {
   return node.parentNode;
 };
-const nextSibling = (node: VuiNode): VuiNode | null => {
-  const parent = node.parentNode;
-  if (!parent) {
-    return null;
-  }
-  const i = parent.children.indexOf(node);
-  return parent.children[i + 1] || null;
+const nextSibling = (node: Node): Node | null => {
+  return node.nextSibling;
 };
 
 export const nodeOps = {
