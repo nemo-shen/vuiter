@@ -1,5 +1,5 @@
 export const BORDER_STYLE = {
-  soild: {
+  solid: {
     topLeft: "┌",
     topRight: "┐",
     bottomLeft: "└",

@@ -90,7 +90,7 @@ class App {
       }
     }
 
-    const borderStyle = BORDER_STYLE[el.style?.borderStyle ?? "soild"];
+    const borderStyle = BORDER_STYLE[el.style?.borderStyle ?? "solid"];
 
     for (let y = top; y < top + height; y++) {
       for (let x = left; x < left + width; x++) {

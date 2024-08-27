@@ -1,6 +1,6 @@
-import { Node as YogaNode } from "yoga-layout";
+import Yoga, { Edge, Node as YogaNode } from "yoga-layout";
 
-interface Node {
+export interface Node {
   /**
    * Returns the children.
    *
@@ -32,10 +32,19 @@ interface Node {
   COMMENT_NODE: 8;
 }
 
-class Node implements Node {
+export class Node implements Node {
   childNodes: Node[] = [];
   parentNode: Node | null = null;
   textContent: string | null = null;
+  yogaNode: YogaNode;
+
+  constructor() {
+    this.yogaNode = Yoga.Node.create();
+    this.yogaNode.setWidth(50)
+    this.yogaNode.setHeight(20)
+    this.yogaNode.setBorder(Edge.All, 1)
+    this.yogaNode.setPadding(Edge.All, 1)
+  }
 
   insertBefore<T extends Node>(node: T, child: Node | null = null): T {
     if (child) {
@@ -43,9 +52,11 @@ class Node implements Node {
       if (index !== -1) {
         node.nextSibling = child;
         this.childNodes.splice(index, 0, node);
+        this.yogaNode.insertChild(node.yogaNode, index);
       }
     } else {
       this.childNodes.push(node);
+      this.yogaNode.insertChild(node.yogaNode, this.yogaNode.getChildCount());
     }
     return node;
   }
@@ -56,6 +67,7 @@ class Node implements Node {
       this.childNodes.splice(index, 1);
       if (index > 1) {
         this.childNodes[index - 1].nextSibling = this.childNodes[index] || null;
+        this.yogaNode.removeChild(child.yogaNode);
       }
     }
     return child;
@@ -71,21 +83,18 @@ class VuiElement extends Node {
   parentNode: VuiElement | null;
   tagName: string;
   props: Record<string, any>;
-  yogaNode: YogaNode | null;
 
   constructor(tagName = "div") {
     super();
     this.parentNode = null;
     this.tagName = tagName;
     this.props = {};
-    this.yogaNode = null;
   }
 }
 class VuiText extends Node {
   data: string;
   type = Node.TEXT_NODE;
   parentNode: VuiElement | null;
-  yogaNode: YogaNode | null;
 
   constructor(data: string) {
     super();
@@ -133,7 +142,7 @@ const setElementText = (el: VuiElement, text: string): void => {
 
   el.childNodes.forEach((child) => {
     el.removeChild(child);
-  })
+  });
 
   if (text) {
     el.insertBefore(new VuiText(text));

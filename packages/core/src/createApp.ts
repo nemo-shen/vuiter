@@ -1,47 +1,129 @@
 import type { Component, DefineComponent, PropType } from "@vue/runtime-core";
 import { createRenderer, defineComponent, h, onMounted } from "@vue/runtime-core";
 import { patchProp } from "./patchProp";
-import { nodeOps, VUIElement, VUINode } from "./nodeOps";
+import { nodeOps, Node, VUIElement, VUINode } from "./nodeOps";
 import App from "./app";
 import Div, { VUICSSStyleDeclaration } from "./div";
+import { Direction, Edge } from "yoga-layout";
+import { isDef } from "./utils";
+import chalk from "chalk";
+import { BORDER_STYLE } from "./constants";
+import process from "node:process";
 
-// ------------ test code ------------
-const appLayout = new App();
-const createBox = (index: number) => {
-  const style: Partial<VUICSSStyleDeclaration> = {
-    width: 20,
-    height: 5,
-    borderWidth: 1,
-    // borderStyle: "round",
-    // flexGrow: 1,
-  };
-  if (index === 2) {
-    // style.gap = 2
-    // style.flexShrink = 1;
-    // style.flexGrow = 2;
-    // style.marginLeft = 'auto';
+const columns = 50; // dev
+const rows = 20; // dev
+const canvas = new Array(rows).fill(null).map(() => new Array(columns).fill(""));
+
+function drawNodeToCanvas(el: Node) {
+  const { yogaNode: node } = el;
+  if (!node) return;
+  const style = {
+    borderStyle: "solid",
+  } as Record<string, any>;
+  const left = node.getComputedLeft();
+  const top = node.getComputedTop();
+  const width = node.getComputedWidth();
+  const height = node.getComputedHeight();
+
+  // 绘制节点的 margin 区域
+  const marginLeft = node.getComputedMargin(Edge.Left);
+  const marginTop = node.getComputedMargin(Edge.Top);
+  const marginRight = node.getComputedMargin(Edge.Right);
+  const marginBottom = node.getComputedMargin(Edge.Bottom);
+
+  // 绘制节点的 padding 区域
+  const paddingLeft = node.getComputedPadding(Edge.Left);
+  const paddingTop = node.getComputedPadding(Edge.Top);
+  const paddingRight = node.getComputedPadding(Edge.Right);
+  const paddingBottom = node.getComputedPadding(Edge.Bottom);
+
+  // 绘制节点的边框区域
+  const borderLeft = node.getComputedBorder(Edge.Left);
+  const borderTop = node.getComputedBorder(Edge.Top);
+  const borderRight = node.getComputedBorder(Edge.Right);
+  const borderBottom = node.getComputedBorder(Edge.Bottom);
+
+  const gapText = " ";
+
+  // 绘制 margin
+  for (let y = top - marginTop; y < top + height + marginBottom; y++) {
+    for (let x = left - marginLeft; x < left + width + marginRight; x++) {
+      if (y >= 0 && y < canvas.length && x >= 0 && x < canvas[y].length) {
+        canvas[y][x] = gapText;
+      }
+    }
   }
-  const box = new Div({
-    style,
-  });
-  return box;
-};
 
-// TODO: 这里要处理子节点的嵌套
-appLayout.append(...Array.from({ length: 3 }, (_, index) => createBox(index)));
-// ------------ test code ------------
+  const borderStyle = BORDER_STYLE["solid"];
+
+  for (let y = top; y < top + height-borderTop-borderBottom; y++) {
+    for (let x = left; x < left + width; x++) {
+      let text = "";
+      if (y >= 0 && y < canvas.length && x >= 0 && x < canvas[y].length) {
+        if (y === top && x === left) {
+          text = borderStyle.topLeft;
+        } else if (y === top && x === left + width - 1) {
+          text = borderStyle.topRight;
+        } else if (y === top + height - 1 && x === left) {
+          text = borderStyle.bottomLeft;
+        } else if (y === top + height - 1 && x === left + width - 1) {
+          text = borderStyle.bottomRight;
+        } else if (
+          (y > top && y < top + height - 1 && x === left) ||
+          (y > top && y < top + height - 1 && x === left + width - 1)
+        ) {
+          text = borderStyle.vertical;
+        } else {
+          text = borderStyle.horizontal;
+        }
+      }
+      canvas[y][x] = style?.borderColor ? chalk.hex(style.borderColor)(text) : text;
+    }
+  }
+
+  for (let y = top + borderTop; y < top + height - borderBottom; y++) {
+    for (let x = left + borderLeft; x < left + width - borderRight; x++) {
+      if (y >= 0 && y < canvas.length && x >= 0 && x < canvas[y].length) {
+        canvas[y][x] = gapText;
+        // if (isDef(style.backgroundColor)) {
+        //   canvas[y][x] = chalk.bgHex(style.backgroundColor)(gapText);
+        // }
+      }
+    }
+  }
+
+  for (let y = top + borderTop + paddingTop; y < top + height - borderBottom - paddingBottom; y++) {
+    for (
+      let x = left + borderLeft + paddingLeft;
+      x < left + width - borderRight - paddingRight;
+      x++
+    ) {
+      if (y >= 0 && y < canvas.length && x >= 0 && x < canvas[y].length) {
+        canvas[y][x] = gapText;
+        // if (isDef(style.backgroundColor)) {
+        //   canvas[y][x] = chalk.bgHex(style.backgroundColor)(gapText);
+        // }
+      }
+    }
+  }
+
+  
+  for (const child of el.childNodes) {
+    drawNodeToCanvas(child);
+  }
+}
+
+const render = (canvas: string[][]) => {
+  canvas.forEach((row) => {
+    process.stdout.write(row.join("") + "\n");
+  });
+};
 
 const extend = Object.assign;
 
 const { render: baseRender, createApp: baseCreateApp } = createRenderer<VUINode, VUIElement>(
   extend({ patchProp }, nodeOps),
 );
-const Comp = defineComponent({
-  render() {
-    console.log(123012301203);
-    return "Hello World";
-  },
-});
 
 // 为什么要给她包一层是因为我们要处理一些事情，比如重新渲染之类的事情
 export const VUIApp = defineComponent({
@@ -51,19 +133,25 @@ export const VUIApp = defineComponent({
       type: Object as PropType<DefineComponent>,
       required: true,
     },
+    body: {
+      type: Object as PropType<VUIElement>,
+      required: true,
+    },
   },
   setup(props, { attrs }) {
     onMounted(() => {
+      const yogaNode = props.body.yogaNode;
+      yogaNode.calculateLayout(undefined, undefined, Direction.LTR);
+      drawNodeToCanvas(props.body);
+      render(canvas);
+
       // 在onMounted中处理yogaNode，然后render出来
       console.log("onMounted");
 
       /**
-       * 大概知道逻辑了，就是nodeOps的时候就已经挂载好了全部的yogaNode
+       * nodeOps的时候就已经挂载好了全部的yogaNode
        * 在onMounted的时候只不过是把布局好的内容渲染出来
        */
-      appLayout.flow();
-      appLayout.paint();
-      appLayout.render();
     });
 
     return () => h(props.root /* 这个root是外部开发传入的根组件 */, attrs);
@@ -75,6 +163,7 @@ export const createApp = (rootComponent: Component) => {
   // const rootContainer = nodeOps.createElement("div");
   const app = baseCreateApp(VUIApp, {
     root: rootComponent, // 开发者的根节点应该作为vuiter app 的子节点
+    body,
   });
   const { mount } = app;
   const newApp: any = app;
