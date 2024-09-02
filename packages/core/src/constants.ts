@@ -31,12 +31,4 @@ export const BORDER_STYLE = {
     horizontal: "─",
     vertical: "│",
   },
-  dotted: {
-    topLeft: "😂",
-    topRight: "😂",
-    bottomLeft: "😂",
-    bottomRight: "😂",
-    horizontal: "😂",
-    vertical: "😂",
-  },
 };

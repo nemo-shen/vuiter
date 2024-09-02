@@ -54,60 +54,62 @@ function drawNodeToCanvas(el: Node) {
     }
   }
 
-  const borderStyle = BORDER_STYLE["solid"];
+  const borderStyle = BORDER_STYLE["round"];
 
-  for (let y = top; y < top + height-borderTop-borderBottom; y++) {
-    for (let x = left; x < left + width; x++) {
+  const right = left + width - 1;
+  const bottom = top + height - 1;
+  for (let y = top; y <= bottom; y++) {
+    for (let x = left; x <= right; x++) {
       let text = "";
       if (y >= 0 && y < canvas.length && x >= 0 && x < canvas[y].length) {
         if (y === top && x === left) {
           text = borderStyle.topLeft;
-        } else if (y === top && x === left + width - 1) {
+        } else if (y === top && x === right) {
           text = borderStyle.topRight;
-        } else if (y === top + height - 1 && x === left) {
+        } else if (y === bottom && x === left) {
           text = borderStyle.bottomLeft;
-        } else if (y === top + height - 1 && x === left + width - 1) {
+        } else if (y === bottom && x === right) {
           text = borderStyle.bottomRight;
-        } else if (
-          (y > top && y < top + height - 1 && x === left) ||
-          (y > top && y < top + height - 1 && x === left + width - 1)
-        ) {
+        } else if (top < y && y < bottom && (x === left || x === right)) {
           text = borderStyle.vertical;
-        } else {
+        } else if (
+          left < x && x < right && (y === top || y === bottom)
+        ) {
           text = borderStyle.horizontal;
+        } else {
+          text = ' ';
         }
       }
       canvas[y][x] = style?.borderColor ? chalk.hex(style.borderColor)(text) : text;
     }
   }
 
-  for (let y = top + borderTop; y < top + height - borderBottom; y++) {
-    for (let x = left + borderLeft; x < left + width - borderRight; x++) {
-      if (y >= 0 && y < canvas.length && x >= 0 && x < canvas[y].length) {
-        canvas[y][x] = gapText;
-        // if (isDef(style.backgroundColor)) {
-        //   canvas[y][x] = chalk.bgHex(style.backgroundColor)(gapText);
-        // }
-      }
-    }
-  }
+  // for (let y = top + borderTop; y < top + height - borderBottom; y++) {
+  //   for (let x = left + borderLeft; x < left + width - borderRight; x++) {
+  //     if (y >= 0 && y < canvas.length && x >= 0 && x < canvas[y].length) {
+  //       canvas[y][x] = gapText;
+  //       // if (isDef(style.backgroundColor)) {
+  //       //   canvas[y][x] = chalk.bgHex(style.backgroundColor)(gapText);
+  //       // }
+  //     }
+  //   }
+  // }
 
-  for (let y = top + borderTop + paddingTop; y < top + height - borderBottom - paddingBottom; y++) {
-    for (
-      let x = left + borderLeft + paddingLeft;
-      x < left + width - borderRight - paddingRight;
-      x++
-    ) {
-      if (y >= 0 && y < canvas.length && x >= 0 && x < canvas[y].length) {
-        canvas[y][x] = gapText;
-        // if (isDef(style.backgroundColor)) {
-        //   canvas[y][x] = chalk.bgHex(style.backgroundColor)(gapText);
-        // }
-      }
-    }
-  }
+  // for (let y = top + borderTop + paddingTop; y < top + height - borderBottom - paddingBottom; y++) {
+  //   for (
+  //     let x = left + borderLeft + paddingLeft;
+  //     x < left + width - borderRight - paddingRight;
+  //     x++
+  //   ) {
+  //     if (y >= 0 && y < canvas.length && x >= 0 && x < canvas[y].length) {
+  //       canvas[y][x] = gapText;
+  //       // if (isDef(style.backgroundColor)) {
+  //       //   canvas[y][x] = chalk.bgHex(style.backgroundColor)(gapText);
+  //       // }
+  //     }
+  //   }
+  // }
 
-  
   for (const child of el.childNodes) {
     drawNodeToCanvas(child);
   }
@@ -154,7 +156,10 @@ export const VUIApp = defineComponent({
        */
     });
 
-    return () => h(props.root /* 这个root是外部开发传入的根组件 */, attrs);
+    return () =>
+      h(props.root /* 这个root是外部开发传入的根组件 */, {
+        foo: "bar",
+      });
   },
 });
 

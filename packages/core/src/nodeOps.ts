@@ -1,3 +1,4 @@
+import { VuiElement } from './VuiElement';
 import Yoga, { Edge, Node as YogaNode } from "yoga-layout";
 
 export interface Node {
@@ -117,6 +118,7 @@ class VuiComment extends Node {
 }
 
 const insert = (child: Node, parent: Node, ref: Node | null = null): void => {
+  console.log(child, parent, ref);
   parent.insertBefore(child, ref);
 };
 const remove = (child: Node): void => {
@@ -126,6 +128,7 @@ const remove = (child: Node): void => {
   }
 };
 const createElement = (tag: string): VuiElement => {
+  console.log('weflwlef');
   return new VuiElement(tag);
 };
 const createText = (data: string): VuiText => {
@@ -165,6 +168,4 @@ export const nodeOps = {
   setElementText,
   parentNode,
   nextSibling,
-  // querySelector,
-  // setScopeId,
 };
