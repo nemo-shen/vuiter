@@ -118,7 +118,6 @@ class VuiComment extends Node {
 }
 
 const insert = (child: Node, parent: Node, ref: Node | null = null): void => {
-  console.log(child, parent, ref);
   parent.insertBefore(child, ref);
 };
 const remove = (child: Node): void => {
@@ -128,7 +127,6 @@ const remove = (child: Node): void => {
   }
 };
 const createElement = (tag: string): VuiElement => {
-  console.log('weflwlef');
   return new VuiElement(tag);
 };
 const createText = (data: string): VuiText => {
