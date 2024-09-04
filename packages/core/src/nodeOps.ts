@@ -1,4 +1,3 @@
-import { VuiElement } from './VuiElement';
 import Yoga, { Edge, Node as YogaNode } from "yoga-layout";
 
 export interface Node {
@@ -33,18 +32,66 @@ export interface Node {
   COMMENT_NODE: 8;
 }
 
+type SupportCSSStyleDeclarationKeys =
+  | "width"
+  | "height"
+  | "border"
+  | "borderWidth"
+  | "borderStyle"
+  | "borderColor"
+  | "borderLeft"
+  | "borderLeftColor"
+  | "borderLeftStyle"
+  | "borderLeftWidth"
+  | "borderRight"
+  | "borderRightColor"
+  | "borderRightStyle"
+  | "borderRightWidth"
+  | "borderTop"
+  | "borderTopColor"
+  | "borderTopStyle"
+  | "borderTopWidth"
+  | "borderBottom"
+  | "borderBottomColor"
+  | "borderBottomStyle"
+  | "borderBottomWidth";
+
 export class Node implements Node {
   childNodes: Node[] = [];
   parentNode: Node | null = null;
   textContent: string | null = null;
   yogaNode: YogaNode;
+  style: Pick<CSSStyleDeclaration, SupportCSSStyleDeclarationKeys> = {
+    border: "",
+    borderLeft: "",
+    borderLeftColor: "",
+    borderLeftStyle: "",
+    borderLeftWidth: "",
+    borderRight: "",
+    borderRightColor: "",
+    borderRightStyle: "",
+    borderRightWidth: "",
+    borderTop: "",
+    borderTopColor: "",
+    borderTopStyle: "",
+    borderTopWidth: "",
+    borderBottom: "",
+    borderBottomColor: "",
+    borderBottomStyle: "",
+    borderBottomWidth: "",
+    width: "",
+    height: "",
+    borderWidth: "",
+    borderStyle: "",
+    borderColor: ""
+  };
 
   constructor() {
     this.yogaNode = Yoga.Node.create();
-    this.yogaNode.setWidth(50)
-    this.yogaNode.setHeight(20)
+    this.yogaNode.setWidth(50);
+    this.yogaNode.setHeight(20);
     // this.yogaNode.setBorder(Edge.All, 1)
-    this.yogaNode.setPadding(Edge.All, 1)
+    this.yogaNode.setPadding(Edge.All, 1);
   }
 
   insertBefore<T extends Node>(node: T, child: Node | null = null): T {

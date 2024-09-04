@@ -5,7 +5,7 @@ import { nodeOps, Node, VUIElement, VUINode } from "./nodeOps";
 import App from "./app";
 import Div, { VUICSSStyleDeclaration } from "./div";
 import { Direction, Edge } from "yoga-layout";
-import { isDef } from "./utils";
+import { extend, isDef } from "./utils";
 import chalk from "chalk";
 import { BORDER_STYLE } from "./constants";
 import process from "node:process";
@@ -17,6 +17,7 @@ const canvas = new Array(rows).fill(null).map(() => new Array(columns).fill(""))
 function drawNodeToCanvas(el: Node) {
   const { yogaNode: node } = el;
   if (!node) return;
+  console.log(el.style);
   const style = {
     borderStyle: "solid",
   } as Record<string, any>;
@@ -159,7 +160,6 @@ const render = (canvas: string[][]) => {
   });
 };
 
-const extend = Object.assign;
 
 const { render: baseRender, createApp: baseCreateApp } = createRenderer<VUINode, VUIElement>(
   extend({ patchProp }, nodeOps),

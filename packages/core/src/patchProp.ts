@@ -1,6 +1,7 @@
 import { Edge } from "yoga-layout";
 import { Node } from "./nodeOps";
 import { BORDER_STYLE } from "./constants";
+import { extend } from "./utils";
 const supportBorderStyles = Object.keys(BORDER_STYLE);
 const isValidColor = (color: string) => {
   if (!color) return false;
@@ -150,6 +151,7 @@ const patchStyle = (el: Node, style: CSSStyleDeclaration) => {
       yogaNode.setHeight(val);
     }
   });
+  el.style = extend(el.style, style);
   patchBorder(el, style);
 };
 
