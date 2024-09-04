@@ -43,7 +43,7 @@ export class Node implements Node {
     this.yogaNode = Yoga.Node.create();
     this.yogaNode.setWidth(50)
     this.yogaNode.setHeight(20)
-    this.yogaNode.setBorder(Edge.All, 1)
+    // this.yogaNode.setBorder(Edge.All, 1)
     this.yogaNode.setPadding(Edge.All, 1)
   }
 

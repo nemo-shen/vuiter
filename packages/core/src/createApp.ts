@@ -56,28 +56,66 @@ function drawNodeToCanvas(el: Node) {
 
   const borderStyle = BORDER_STYLE["round"];
 
+  // console.log(borderLeft, borderTop, borderRight, borderBottom, "|", left, width);
   const right = left + width - 1;
   const bottom = top + height - 1;
   for (let y = top; y <= bottom; y++) {
     for (let x = left; x <= right; x++) {
       let text = "";
       if (y >= 0 && y < canvas.length && x >= 0 && x < canvas[y].length) {
-        if (y === top && x === left) {
-          text = borderStyle.topLeft;
-        } else if (y === top && x === right) {
-          text = borderStyle.topRight;
-        } else if (y === bottom && x === left) {
-          text = borderStyle.bottomLeft;
-        } else if (y === bottom && x === right) {
-          text = borderStyle.bottomRight;
-        } else if (top < y && y < bottom && (x === left || x === right)) {
+        const isLeftBorder = borderLeft && x === left;
+        const isRightBorder = borderRight && x === right;
+        const isTopBorder = borderTop && y === top;
+        const isBottomBorder = borderBottom && y === bottom;
+        const isBorder = isLeftBorder || isRightBorder || isTopBorder || isBottomBorder;
+        const isTopLeftBorderCorner = isLeftBorder && isTopBorder;
+        const isTopRightBorderCorner = isRightBorder && isTopBorder;
+        const isBottomLeftBorderCorner = isBottomBorder && isLeftBorder;
+        const isBottomRightBorderCorner = isBottomBorder && isRightBorder;
+        const isCorner =
+          isTopLeftBorderCorner ||
+          isTopRightBorderCorner ||
+          isBottomLeftBorderCorner ||
+          isBottomRightBorderCorner;
+        const isLeftBorderNotCorner = isLeftBorder && !isCorner;
+        const isRightBorderNotCorner = isRightBorder && !isCorner;
+        const isTopBorderNotCorner = isTopBorder && !isCorner;
+        const isBottomBorderNotCorner = isBottomBorder && !isCorner;
+
+        if (isLeftBorderNotCorner) {
           text = borderStyle.vertical;
-        } else if (
-          left < x && x < right && (y === top || y === bottom)
-        ) {
+        }
+
+        if (isRightBorderNotCorner) {
+          text = borderStyle.vertical;
+        }
+
+        if (isTopBorderNotCorner) {
           text = borderStyle.horizontal;
-        } else {
-          text = ' ';
+        }
+
+        if (isBottomBorderNotCorner) {
+          text = borderStyle.horizontal;
+        }
+
+        if (isTopLeftBorderCorner) {
+          text = borderStyle.topLeft;
+        }
+
+        if (isTopRightBorderCorner) {
+          text = borderStyle.topRight;
+        }
+
+        if (isBottomLeftBorderCorner) {
+          text = borderStyle.bottomLeft;
+        }
+
+        if (isBottomRightBorderCorner) {
+          text = borderStyle.bottomRight;
+        }
+
+        if (!isBorder) {
+          text = " ";
         }
       }
       canvas[y][x] = style?.borderColor ? chalk.hex(style.borderColor)(text) : text;
