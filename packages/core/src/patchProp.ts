@@ -27,20 +27,20 @@ const isStyle = (value: string) => supportBorderStyles.includes(value);
 const isColor = (value: string) => isValidColor(value);
 
 type BorderStyleKey = keyof typeof BORDER_STYLE;
-type BorderConfig = {
+export type BorderConfig = {
   width: number;
   style: BorderStyleKey;
   color: string;
 };
 
-const DEFAULT_BORDER_CONFIG: BorderConfig = {
+export const DEFAULT_BORDER_CONFIG: BorderConfig = {
   width: 0,
   style: "solid",
   color: "#ffffff",
 };
 
 const genBorderConfig = (...configs: BorderConfig[]) => {
-  const config = DEFAULT_BORDER_CONFIG;
+  const config = extend({}, DEFAULT_BORDER_CONFIG);
   for (const cfg of configs) {
     if (cfg.width && cfg.width !== 0) {
       config.width = 1;
@@ -137,6 +137,8 @@ const patchBorder = (el: Node, style: CSSStyleDeclaration) => {
         break;
     }
   }
+
+  el.borderConfig = extend({}, borderConfig);
 };
 
 const patchStyle = (el: Node, style: CSSStyleDeclaration) => {
@@ -144,10 +146,10 @@ const patchStyle = (el: Node, style: CSSStyleDeclaration) => {
   Object.keys(style).forEach((key) => {
     const value = style[key as keyof CSSStyleDeclaration];
     if (key === "width") {
-      const val = parseInt(value);
+      const val = parseInt(value as string);
       yogaNode.setWidth(val);
     } else if (key === "height") {
-      const val = parseInt(value);
+      const val = parseInt(value as string);
       yogaNode.setHeight(val);
     }
   });

@@ -3,6 +3,21 @@
 Terminal TUI similar [vue-termui](https://github.com/vue-terminal/vue-termui).
 base on Vue3
 
+[//]: # (# 边框)
+
+[//]: # (仅支持统一的边框定义, 例如 `border: 1rem solid #fff;`)
+
+[//]: # ()
+[//]: # (为什么不支持 border-<left|top|right|bottom>-<style>-<color>这样的对单边进行的样式定义？)
+
+[//]: # ()
+[//]: # (因为命令行实际是文本环境，边框也实际上是文本，所以:)
+
+[//]: # (1. 超过1rem的边框的宽度设置首先没有意义)
+
+[//]: # (2. 不同的边设置不同的样式)
+[//]: # (想了一下是有意义的，需要在权衡一下)
+
 # 尺寸单位
 
 rem(推荐)

@@ -17,7 +17,6 @@ const canvas = new Array(rows).fill(null).map(() => new Array(columns).fill(""))
 function drawNodeToCanvas(el: Node) {
   const { yogaNode: node } = el;
   if (!node) return;
-  console.log(el.style);
   const style = {
     borderStyle: "solid",
   } as Record<string, any>;
@@ -55,9 +54,7 @@ function drawNodeToCanvas(el: Node) {
     }
   }
 
-  const borderStyle = BORDER_STYLE["round"];
-
-  // console.log(borderLeft, borderTop, borderRight, borderBottom, "|", left, width);
+  console.log("----------");
   const right = left + width - 1;
   const bottom = top + height - 1;
   for (let y = top; y <= bottom; y++) {
@@ -84,35 +81,43 @@ function drawNodeToCanvas(el: Node) {
         const isBottomBorderNotCorner = isBottomBorder && !isCorner;
 
         if (isLeftBorderNotCorner) {
-          text = borderStyle.vertical;
+          text = BORDER_STYLE[el.borderConfig.left.style].vertical;
+          text = chalk.hex(el.borderConfig.left.color)(text);
         }
 
         if (isRightBorderNotCorner) {
-          text = borderStyle.vertical;
+          text = BORDER_STYLE[el.borderConfig.right.style].vertical;
+          text = chalk.hex(el.borderConfig.right.color)(text);
         }
 
         if (isTopBorderNotCorner) {
-          text = borderStyle.horizontal;
+          text = BORDER_STYLE[el.borderConfig.top.style].horizontal;
+          text = chalk.hex(el.borderConfig.top.color)(text);
         }
 
         if (isBottomBorderNotCorner) {
-          text = borderStyle.horizontal;
+          text = BORDER_STYLE[el.borderConfig.bottom.style].horizontal;
+          text = chalk.hex(el.borderConfig.bottom.color)(text);
         }
 
         if (isTopLeftBorderCorner) {
-          text = borderStyle.topLeft;
+          text = BORDER_STYLE[el.borderConfig.left.style].topLeft;
+          text = chalk.hex(el.borderConfig.left.color)(text);
         }
 
         if (isTopRightBorderCorner) {
-          text = borderStyle.topRight;
+          text = BORDER_STYLE[el.borderConfig.right.style].topRight;
+          text = chalk.hex(el.borderConfig.right.color)(text);
         }
 
         if (isBottomLeftBorderCorner) {
-          text = borderStyle.bottomLeft;
+          text = BORDER_STYLE[el.borderConfig.left.style].bottomLeft;
+          text = chalk.hex(el.borderConfig.left.color)(text);
         }
 
         if (isBottomRightBorderCorner) {
-          text = borderStyle.bottomRight;
+          text = BORDER_STYLE[el.borderConfig.right.style].bottomRight;
+          text = chalk.hex(el.borderConfig.right.color)(text);
         }
 
         if (!isBorder) {
@@ -159,7 +164,6 @@ const render = (canvas: string[][]) => {
     process.stdout.write(row.join("") + "\n");
   });
 };
-
 
 const { render: baseRender, createApp: baseCreateApp } = createRenderer<VUINode, VUIElement>(
   extend({ patchProp }, nodeOps),

@@ -1,4 +1,6 @@
 import Yoga, { Edge, Node as YogaNode } from "yoga-layout";
+import { BorderConfig, DEFAULT_BORDER_CONFIG } from "./patchProp";
+import { extend } from "./utils";
 
 export interface Node {
   /**
@@ -30,6 +32,14 @@ export interface Node {
   ELEMENT_NODE: 1;
   TEXT_NODE: 3;
   COMMENT_NODE: 8;
+
+  yogaNode: YogaNode;
+  borderConfig: {
+    left: BorderConfig;
+    top: BorderConfig;
+    right: BorderConfig;
+    bottom: BorderConfig;
+  };
 }
 
 type SupportCSSStyleDeclarationKeys =
@@ -83,14 +93,17 @@ export class Node implements Node {
     height: "",
     borderWidth: "",
     borderStyle: "",
-    borderColor: ""
+    borderColor: "",
+  };
+  borderConfig = {
+    left: extend({}, DEFAULT_BORDER_CONFIG),
+    top: extend({}, DEFAULT_BORDER_CONFIG),
+    right: extend({}, DEFAULT_BORDER_CONFIG),
+    bottom: extend({}, DEFAULT_BORDER_CONFIG),
   };
 
   constructor() {
     this.yogaNode = Yoga.Node.create();
-    this.yogaNode.setWidth(50);
-    this.yogaNode.setHeight(20);
-    // this.yogaNode.setBorder(Edge.All, 1)
     this.yogaNode.setPadding(Edge.All, 1);
   }
 
