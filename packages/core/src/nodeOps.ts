@@ -104,7 +104,7 @@ export class Node implements Node {
 
   constructor() {
     this.yogaNode = Yoga.Node.create();
-    this.yogaNode.setPadding(Edge.All, 1);
+    // this.yogaNode.setPadding(Edge.All, 1);
   }
 
   insertBefore<T extends Node>(node: T, child: Node | null = null): T {

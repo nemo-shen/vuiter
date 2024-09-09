@@ -141,6 +141,77 @@ const patchBorder = (el: Node, style: CSSStyleDeclaration) => {
   el.borderConfig = extend({}, borderConfig);
 };
 
+const patchPadding = (el: Node, style: CSSStyleDeclaration) => {
+  const { yogaNode } = el;
+  const {
+    padding = "",
+    paddingLeft = "",
+    paddingTop = "",
+    paddingRight = "",
+    paddingBottom = "",
+  } = style;
+  const paddingProps = padding.split(" ");
+  let paddingConfig = {
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+  };
+  if (paddingProps.length === 1) {
+    const all = parseInt(paddingProps[0]);
+    if (!Number.isNaN(all)) {
+      paddingConfig.top = all;
+      paddingConfig.right = all;
+      paddingConfig.bottom = all;
+      paddingConfig.left = all;
+    }
+  } else if (paddingProps.length === 2) {
+    const topAndBottom = parseInt(paddingProps[0]);
+    const leftAndRight = parseInt(paddingProps[1]);
+    if (!Number.isNaN(topAndBottom)) {
+      paddingConfig.top = topAndBottom;
+      paddingConfig.bottom = topAndBottom;
+    }
+    if (!Number.isNaN(leftAndRight)) {
+      paddingConfig.left = leftAndRight;
+      paddingConfig.right = leftAndRight;
+    }
+  } else if (paddingProps.length === 3) {
+    const top = parseInt(paddingProps[0]);
+    const leftAndRight = parseInt(paddingProps[1]);
+    const bottom = parseInt(paddingProps[2]);
+    if (!Number.isNaN(top)) {
+      paddingConfig.top = top;
+    }
+    if (!Number.isNaN(leftAndRight)) {
+      paddingConfig.left = leftAndRight;
+      paddingConfig.right = leftAndRight;
+    }
+    if (!Number.isNaN(bottom)) {
+      paddingConfig.bottom = bottom;
+    }
+  } else if (paddingProps.length === 4) {
+    const top = parseInt(paddingProps[0]);
+    const right = parseInt(paddingProps[1]);
+    const bottom = parseInt(paddingProps[2]);
+    const left = parseInt(paddingProps[3]);
+    if (!Number.isNaN(top)) paddingConfig.top = top;
+    if (!Number.isNaN(right)) paddingConfig.right = right;
+    if (!Number.isNaN(bottom)) paddingConfig.bottom = bottom;
+    if (!Number.isNaN(left)) paddingConfig.left = left;
+  }
+
+  if (!Number.isNaN(parseInt(paddingTop))) paddingConfig.top = parseInt(paddingTop);
+  if (!Number.isNaN(parseInt(paddingRight))) paddingConfig.right = parseInt(paddingRight);
+  if (!Number.isNaN(parseInt(paddingBottom))) paddingConfig.bottom = parseInt(paddingBottom);
+  if (!Number.isNaN(parseInt(paddingLeft))) paddingConfig.left = parseInt(paddingLeft);
+
+  if (paddingConfig.top > 0) yogaNode.setPadding(Edge.Top, paddingConfig.top);
+  if (paddingConfig.right > 0) yogaNode.setPadding(Edge.Right, paddingConfig.right);
+  if (paddingConfig.bottom > 0) yogaNode.setPadding(Edge.Bottom, paddingConfig.bottom);
+  if (paddingConfig.left > 0) yogaNode.setPadding(Edge.Left, paddingConfig.left);
+};
+
 const patchStyle = (el: Node, style: CSSStyleDeclaration) => {
   const { yogaNode } = el;
   Object.keys(style).forEach((key) => {
@@ -155,6 +226,7 @@ const patchStyle = (el: Node, style: CSSStyleDeclaration) => {
   });
   el.style = extend(el.style, style);
   patchBorder(el, style);
+  patchPadding(el, style);
 };
 
 export const patchProp = (
