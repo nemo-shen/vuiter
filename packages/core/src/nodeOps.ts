@@ -190,15 +190,18 @@ const createElement = (tag: string): VuiElement => {
   return new VuiElement(tag);
 };
 const createText = (data: string): VuiText => {
+  console.log('nemo createText');
   return new VuiText(data);
 };
 const createComment = (data: string): VuiComment => {
   return new VuiComment(data);
 };
 const setText = (node: VuiText, text: string): void => {
+  console.log('nemo setText', text);
   node.data = text;
 };
 const setElementText = (el: VuiElement, text: string): void => {
+  console.log('nemo setElementText', text);
   el.textContent = text;
 
   el.childNodes.forEach((child) => {

@@ -5,7 +5,7 @@ import { nodeOps, Node, VUIElement, VUINode } from "./nodeOps";
 import App from "./app";
 import Div, { VUICSSStyleDeclaration } from "./div";
 import { Direction, Edge } from "yoga-layout";
-import { extend, isDef } from "./utils";
+import { extend, isDef, splitString } from "./utils";
 import chalk from "chalk";
 import { BORDER_STYLE } from "./constants";
 import process from "node:process";
@@ -54,7 +54,6 @@ function drawNodeToCanvas(el: Node) {
     }
   }
 
-  console.log("----------");
   const right = left + width - 1;
   const bottom = top + height - 1;
   for (let y = top; y <= bottom; y++) {
@@ -153,6 +152,20 @@ function drawNodeToCanvas(el: Node) {
   //     }
   //   }
   // }
+  // 如果节点元素有textContent，则将其渲染到节点内
+  if (el.textContent) {
+    const textList = el.textContent.split("");
+    let row = top + 1;
+    while (row < bottom && textList.length > 0) {
+      let col = left + 1;
+      while (col < right && textList.length > 0) {
+        const char = textList.shift();
+        canvas[row][col] = char;
+        col++;
+      }
+      row++;
+    }
+  }
 
   for (const child of el.childNodes) {
     drawNodeToCanvas(child);

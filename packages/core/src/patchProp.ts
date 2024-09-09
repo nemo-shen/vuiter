@@ -166,5 +166,4 @@ export const patchProp = (
   if (key === "style") {
     patchStyle(el, nextValue as CSSStyleDeclaration);
   }
-  // nextValue = 'abc'
 };
