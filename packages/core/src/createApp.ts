@@ -127,38 +127,13 @@ function drawNodeToCanvas(el: Node) {
     }
   }
 
-  // for (let y = top + borderTop; y < top + height - borderBottom; y++) {
-  //   for (let x = left + borderLeft; x < left + width - borderRight; x++) {
-  //     if (y >= 0 && y < canvas.length && x >= 0 && x < canvas[y].length) {
-  //       canvas[y][x] = gapText;
-  //       // if (isDef(style.backgroundColor)) {
-  //       //   canvas[y][x] = chalk.bgHex(style.backgroundColor)(gapText);
-  //       // }
-  //     }
-  //   }
-  // }
-
-  // for (let y = top + borderTop + paddingTop; y < top + height - borderBottom - paddingBottom; y++) {
-  //   for (
-  //     let x = left + borderLeft + paddingLeft;
-  //     x < left + width - borderRight - paddingRight;
-  //     x++
-  //   ) {
-  //     if (y >= 0 && y < canvas.length && x >= 0 && x < canvas[y].length) {
-  //       canvas[y][x] = gapText;
-  //       // if (isDef(style.backgroundColor)) {
-  //       //   canvas[y][x] = chalk.bgHex(style.backgroundColor)(gapText);
-  //       // }
-  //     }
-  //   }
-  // }
   // 如果节点元素有textContent，则将其渲染到节点内
   if (el.textContent) {
     const textList = el.textContent.split("");
-    let row = top + 1;
-    while (row < bottom && textList.length > 0) {
-      let col = left + 1;
-      while (col < right && textList.length > 0) {
+    let row = paddingTop + top + 1;
+    while (row < bottom - paddingBottom && textList.length > 0) {
+      let col = paddingLeft + left + 1;
+      while (col < right - paddingRight && textList.length > 0) {
         const char = textList.shift();
         canvas[row][col] = char;
         col++;
