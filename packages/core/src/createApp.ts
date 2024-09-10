@@ -1,157 +1,11 @@
 import type { Component, DefineComponent, PropType } from "@vue/runtime-core";
 import { createRenderer, defineComponent, h, onMounted } from "@vue/runtime-core";
 import { patchProp } from "./patchProp";
-import { nodeOps, Node, VUIElement, VUINode } from "./nodeOps";
+import { nodeOps, VUIElement, VUINode } from "./nodeOps";
 import App from "./app";
-import Div, { VUICSSStyleDeclaration } from "./div";
-import { Direction, Edge } from "yoga-layout";
-import { extend, isDef, splitString } from "./utils";
-import chalk from "chalk";
-import { BORDER_STYLE } from "./constants";
-import process from "node:process";
-
-const columns = 50; // dev
-const rows = 20; // dev
-const canvas = new Array(rows).fill(null).map(() => new Array(columns).fill(""));
-
-function drawNodeToCanvas(el: Node) {
-  const { yogaNode: node } = el;
-  if (!node) return;
-  const style = {
-    borderStyle: "solid",
-  } as Record<string, any>;
-  const left = node.getComputedLeft();
-  const top = node.getComputedTop();
-  const width = node.getComputedWidth();
-  const height = node.getComputedHeight();
-
-  // 绘制节点的 margin 区域
-  const marginLeft = node.getComputedMargin(Edge.Left);
-  const marginTop = node.getComputedMargin(Edge.Top);
-  const marginRight = node.getComputedMargin(Edge.Right);
-  const marginBottom = node.getComputedMargin(Edge.Bottom);
-
-  // 绘制节点的 padding 区域
-  const paddingLeft = node.getComputedPadding(Edge.Left);
-  const paddingTop = node.getComputedPadding(Edge.Top);
-  const paddingRight = node.getComputedPadding(Edge.Right);
-  const paddingBottom = node.getComputedPadding(Edge.Bottom);
-
-  // 绘制节点的边框区域
-  const borderLeft = node.getComputedBorder(Edge.Left);
-  const borderTop = node.getComputedBorder(Edge.Top);
-  const borderRight = node.getComputedBorder(Edge.Right);
-  const borderBottom = node.getComputedBorder(Edge.Bottom);
-
-  const gapText = " ";
-
-  // 绘制 margin
-  for (let y = top - marginTop; y < top + height + marginBottom; y++) {
-    for (let x = left - marginLeft; x < left + width + marginRight; x++) {
-      if (y >= 0 && y < canvas.length && x >= 0 && x < canvas[y].length) {
-        canvas[y][x] = gapText;
-      }
-    }
-  }
-
-  const right = left + width - 1;
-  const bottom = top + height - 1;
-  for (let y = top; y <= bottom; y++) {
-    for (let x = left; x <= right; x++) {
-      let text = "";
-      if (y >= 0 && y < canvas.length && x >= 0 && x < canvas[y].length) {
-        const isLeftBorder = borderLeft && x === left;
-        const isRightBorder = borderRight && x === right;
-        const isTopBorder = borderTop && y === top;
-        const isBottomBorder = borderBottom && y === bottom;
-        const isBorder = isLeftBorder || isRightBorder || isTopBorder || isBottomBorder;
-        const isTopLeftBorderCorner = isLeftBorder && isTopBorder;
-        const isTopRightBorderCorner = isRightBorder && isTopBorder;
-        const isBottomLeftBorderCorner = isBottomBorder && isLeftBorder;
-        const isBottomRightBorderCorner = isBottomBorder && isRightBorder;
-        const isCorner =
-          isTopLeftBorderCorner ||
-          isTopRightBorderCorner ||
-          isBottomLeftBorderCorner ||
-          isBottomRightBorderCorner;
-        const isLeftBorderNotCorner = isLeftBorder && !isCorner;
-        const isRightBorderNotCorner = isRightBorder && !isCorner;
-        const isTopBorderNotCorner = isTopBorder && !isCorner;
-        const isBottomBorderNotCorner = isBottomBorder && !isCorner;
-
-        if (isLeftBorderNotCorner) {
-          text = BORDER_STYLE[el.borderConfig.left.style].vertical;
-          text = chalk.hex(el.borderConfig.left.color)(text);
-        }
-
-        if (isRightBorderNotCorner) {
-          text = BORDER_STYLE[el.borderConfig.right.style].vertical;
-          text = chalk.hex(el.borderConfig.right.color)(text);
-        }
-
-        if (isTopBorderNotCorner) {
-          text = BORDER_STYLE[el.borderConfig.top.style].horizontal;
-          text = chalk.hex(el.borderConfig.top.color)(text);
-        }
-
-        if (isBottomBorderNotCorner) {
-          text = BORDER_STYLE[el.borderConfig.bottom.style].horizontal;
-          text = chalk.hex(el.borderConfig.bottom.color)(text);
-        }
-
-        if (isTopLeftBorderCorner) {
-          text = BORDER_STYLE[el.borderConfig.left.style].topLeft;
-          text = chalk.hex(el.borderConfig.left.color)(text);
-        }
-
-        if (isTopRightBorderCorner) {
-          text = BORDER_STYLE[el.borderConfig.right.style].topRight;
-          text = chalk.hex(el.borderConfig.right.color)(text);
-        }
-
-        if (isBottomLeftBorderCorner) {
-          text = BORDER_STYLE[el.borderConfig.left.style].bottomLeft;
-          text = chalk.hex(el.borderConfig.left.color)(text);
-        }
-
-        if (isBottomRightBorderCorner) {
-          text = BORDER_STYLE[el.borderConfig.right.style].bottomRight;
-          text = chalk.hex(el.borderConfig.right.color)(text);
-        }
-
-        if (!isBorder) {
-          text = " ";
-        }
-      }
-      canvas[y][x] = style?.borderColor ? chalk.hex(style.borderColor)(text) : text;
-    }
-  }
-
-  // 如果节点元素有textContent，则将其渲染到节点内
-  if (el.textContent) {
-    const textList = el.textContent.split("");
-    let row = paddingTop + top + 1;
-    while (row < bottom - paddingBottom && textList.length > 0) {
-      let col = paddingLeft + left + 1;
-      while (col < right - paddingRight && textList.length > 0) {
-        const char = textList.shift();
-        canvas[row][col] = char;
-        col++;
-      }
-      row++;
-    }
-  }
-
-  for (const child of el.childNodes) {
-    drawNodeToCanvas(child);
-  }
-}
-
-const render = (canvas: string[][]) => {
-  canvas.forEach((row) => {
-    process.stdout.write(row.join("") + "\n");
-  });
-};
+import { Direction } from "yoga-layout";
+import { extend } from "./utils";
+import { render } from "./render";
 
 const { render: baseRender, createApp: baseCreateApp } = createRenderer<VUINode, VUIElement>(
   extend({ patchProp }, nodeOps),
@@ -174,8 +28,7 @@ export const VUIApp = defineComponent({
     onMounted(() => {
       const yogaNode = props.body.yogaNode;
       yogaNode.calculateLayout(undefined, undefined, Direction.LTR);
-      drawNodeToCanvas(props.body);
-      render(canvas);
+      render(props.body);
 
       // 在onMounted中处理yogaNode，然后render出来
       console.log("onMounted");
