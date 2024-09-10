@@ -212,6 +212,77 @@ const patchPadding = (el: Node, style: CSSStyleDeclaration) => {
   if (paddingConfig.left > 0) yogaNode.setPadding(Edge.Left, paddingConfig.left);
 };
 
+const patchMargin = (el: Node, style: CSSStyleDeclaration) => {
+  const { yogaNode } = el;
+  const {
+    margin = "",
+    marginLeft = "",
+    marginTop = "",
+    marginRight = "",
+    marginBottom = "",
+  } = style;
+  const marginProps = margin.split(" ");
+  let marginConfig = {
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+  };
+  if (marginProps.length === 1) {
+    const all = parseInt(marginProps[0]);
+    if (!Number.isNaN(all)) {
+      marginConfig.top = all;
+      marginConfig.right = all;
+      marginConfig.bottom = all;
+      marginConfig.left = all;
+    }
+  } else if (marginProps.length === 2) {
+    const topAndBottom = parseInt(marginProps[0]);
+    const leftAndRight = parseInt(marginProps[1]);
+    if (!Number.isNaN(topAndBottom)) {
+      marginConfig.top = topAndBottom;
+      marginConfig.bottom = topAndBottom;
+    }
+    if (!Number.isNaN(leftAndRight)) {
+      marginConfig.left = leftAndRight;
+      marginConfig.right = leftAndRight;
+    }
+  } else if (marginProps.length === 3) {
+    const top = parseInt(marginProps[0]);
+    const leftAndRight = parseInt(marginProps[1]);
+    const bottom = parseInt(marginProps[2]);
+    if (!Number.isNaN(top)) {
+      marginConfig.top = top;
+    }
+    if (!Number.isNaN(leftAndRight)) {
+      marginConfig.left = leftAndRight;
+      marginConfig.right = leftAndRight;
+    }
+    if (!Number.isNaN(bottom)) {
+      marginConfig.bottom = bottom;
+    }
+  } else if (marginProps.length === 4) {
+    const top = parseInt(marginProps[0]);
+    const right = parseInt(marginProps[1]);
+    const bottom = parseInt(marginProps[2]);
+    const left = parseInt(marginProps[3]);
+    if (!Number.isNaN(top)) marginConfig.top = top;
+    if (!Number.isNaN(right)) marginConfig.right = right;
+    if (!Number.isNaN(bottom)) marginConfig.bottom = bottom;
+    if (!Number.isNaN(left)) marginConfig.left = left;
+  }
+
+  if (!Number.isNaN(parseInt(marginTop))) marginConfig.top = parseInt(marginTop);
+  if (!Number.isNaN(parseInt(marginRight))) marginConfig.right = parseInt(marginRight);
+  if (!Number.isNaN(parseInt(marginBottom))) marginConfig.bottom = parseInt(marginBottom);
+  if (!Number.isNaN(parseInt(marginLeft))) marginConfig.left = parseInt(marginLeft);
+
+  if (marginConfig.top > 0) yogaNode.setMargin(Edge.Top, marginConfig.top);
+  if (marginConfig.right > 0) yogaNode.setMargin(Edge.Right, marginConfig.right);
+  if (marginConfig.bottom > 0) yogaNode.setMargin(Edge.Bottom, marginConfig.bottom);
+  if (marginConfig.left > 0) yogaNode.setMargin(Edge.Left, marginConfig.left);
+};
+
 const patchStyle = (el: Node, style: CSSStyleDeclaration) => {
   const { yogaNode } = el;
   Object.keys(style).forEach((key) => {
@@ -226,6 +297,7 @@ const patchStyle = (el: Node, style: CSSStyleDeclaration) => {
   });
   el.style = extend(el.style, style);
   patchBorder(el, style);
+  patchMargin(el, style);
   patchPadding(el, style);
 };
 
