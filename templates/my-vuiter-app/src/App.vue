@@ -9,6 +9,6 @@
         Hello World!
       </div>
     </div>
-    <div>right container</div>
+    <div style="width: 20rem; height: 10rem; border: 1rem round #ff00ff;">right container</div>
   </div>
 </template>

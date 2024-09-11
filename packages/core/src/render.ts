@@ -3,8 +3,8 @@ import { Node } from "./nodeOps";
 import { Edge } from "yoga-layout";
 import { BORDER_STYLE } from "./constants";
 
-const columns = 50; // dev
-const rows = 20; // dev
+const columns = 100; // dev
+const rows = 40; // dev
 const canvas = new Array(rows).fill(null).map(() => new Array(columns).fill(""));
 
 function drawNodeToCanvas(el: Node) {
