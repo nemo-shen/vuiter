@@ -104,7 +104,6 @@ export class Node implements Node {
 
   constructor() {
     this.yogaNode = Yoga.Node.create();
-    // this.yogaNode.setPadding(Edge.All, 1);
   }
 
   insertBefore<T extends Node>(node: T, child: Node | null = null): T {
@@ -141,13 +140,11 @@ export class Node implements Node {
 
 class VuiElement extends Node {
   nodeType = Node.ELEMENT_NODE;
-  parentNode: VuiElement | null;
   tagName: string;
   props: Record<string, any>;
 
   constructor(tagName = "div") {
     super();
-    this.parentNode = null;
     this.tagName = tagName;
     this.props = {};
   }
@@ -155,13 +152,10 @@ class VuiElement extends Node {
 class VuiText extends Node {
   data: string;
   type = Node.TEXT_NODE;
-  parentNode: VuiElement | null;
 
   constructor(data: string) {
     super();
     this.data = data;
-    this.parentNode = null;
-    this.yogaNode = null;
   }
 }
 
@@ -187,6 +181,7 @@ const remove = (child: Node): void => {
   }
 };
 const createElement = (tag: string): VuiElement => {
+  console.log('createElement');
   return new VuiElement(tag);
 };
 const createText = (data: string): VuiText => {
