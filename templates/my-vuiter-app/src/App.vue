@@ -1,10 +1,10 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div>
-    <div style="width: 20rem; height: 15rem; border: 1rem solid #ff0000">
+  <div style="display: flex;flex-direction: row;align-items: center;justify-content: flex-start;">
+    <div style="width: 20rem; height: 15rem; border: 1rem solid blue">
       <div
-        style="width: 10rem; height: 10rem; border: 1rem round #5487df; padding: 2rem; margin: 1rem"
+        style="width: 10rem; height: 10rem; border: 1rem round yellow; padding: 2rem; margin: 1rem"
       >
         Hello World!
       </div>

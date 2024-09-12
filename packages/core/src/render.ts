@@ -2,10 +2,36 @@ import chalk from "chalk";
 import { Node } from "./nodeOps";
 import { Edge } from "yoga-layout";
 import { BORDER_STYLE } from "./constants";
+import {
+  isHexColor,
+  isNamedColor,
+  isRgbColor,
+  SupportNamedColor,
+  supportNamedColors,
+} from "./utils";
 
 const columns = 100; // dev
 const rows = 40; // dev
 const canvas = new Array(rows).fill(null).map(() => new Array(columns).fill(""));
+
+function setColor(text: string, color: string) {
+  if (!color) {
+    return text;
+  }
+  if (isHexColor(color)) {
+    return chalk.hex(color)(text);
+  }
+
+  if (isRgbColor(color)) {
+    return chalk.hex(color)(text);
+  }
+
+  if (isNamedColor(color)) {
+    return chalk[color as SupportNamedColor](text);
+  }
+
+  return text;
+}
 
 function drawNodeToCanvas(el: Node) {
   const { yogaNode: node } = el;
@@ -74,49 +100,49 @@ function drawNodeToCanvas(el: Node) {
 
         if (isLeftBorderNotCorner) {
           text = BORDER_STYLE[el.borderConfig.left.style].vertical;
-          text = chalk.hex(el.borderConfig.left.color)(text);
+          text = setColor(text, el.borderConfig.left.color);
         }
 
         if (isRightBorderNotCorner) {
           text = BORDER_STYLE[el.borderConfig.right.style].vertical;
-          text = chalk.hex(el.borderConfig.right.color)(text);
+          text = setColor(text, el.borderConfig.right.color);
         }
 
         if (isTopBorderNotCorner) {
           text = BORDER_STYLE[el.borderConfig.top.style].horizontal;
-          text = chalk.hex(el.borderConfig.top.color)(text);
+          text = setColor(text, el.borderConfig.top.color);
         }
 
         if (isBottomBorderNotCorner) {
           text = BORDER_STYLE[el.borderConfig.bottom.style].horizontal;
-          text = chalk.hex(el.borderConfig.bottom.color)(text);
+          text = setColor(text, el.borderConfig.bottom.color);
         }
 
         if (isTopLeftBorderCorner) {
           text = BORDER_STYLE[el.borderConfig.left.style].topLeft;
-          text = chalk.hex(el.borderConfig.left.color)(text);
+          text = setColor(text, el.borderConfig.left.color);
         }
 
         if (isTopRightBorderCorner) {
           text = BORDER_STYLE[el.borderConfig.right.style].topRight;
-          text = chalk.hex(el.borderConfig.right.color)(text);
+          text = setColor(text, el.borderConfig.right.color);
         }
 
         if (isBottomLeftBorderCorner) {
           text = BORDER_STYLE[el.borderConfig.left.style].bottomLeft;
-          text = chalk.hex(el.borderConfig.left.color)(text);
+          text = setColor(text, el.borderConfig.left.color);
         }
 
         if (isBottomRightBorderCorner) {
           text = BORDER_STYLE[el.borderConfig.right.style].bottomRight;
-          text = chalk.hex(el.borderConfig.right.color)(text);
+          text = setColor(text, el.borderConfig.right.color);
         }
 
         if (!isBorder) {
           text = " ";
         }
       }
-      canvas[y][x] = style?.borderColor ? chalk.hex(style.borderColor)(text) : text;
+      canvas[y][x] = text;
     }
   }
 

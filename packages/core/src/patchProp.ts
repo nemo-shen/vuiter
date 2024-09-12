@@ -1,28 +1,9 @@
 import { Edge } from "yoga-layout";
 import { Node } from "./nodeOps";
 import { BORDER_STYLE } from "./constants";
-import { extend } from "./utils";
+import { extend, isValidColor } from "./utils";
 const supportBorderStyles = Object.keys(BORDER_STYLE);
-const isValidColor = (color: string) => {
-  if (!color) return false;
-  // Regular expressions for different color formats
-  const hexRegex = /^#([0-9A-Fa-f]{3}){1,2}$/;
-  const rgbRegex = /^rgb\((\s*\d+\s*,){2}\s*\d+\s*\)$/;
-  const namedColors = [
-    "black",
-    "red",
-    "green",
-    "yellow",
-    "blue",
-    "magenta",
-    "cyan",
-    "white",
-    "gray", // alias blackBright
-    "grey", // alias blackBright
-  ];
 
-  return hexRegex.test(color) || rgbRegex.test(color) || namedColors.includes(color.toLowerCase());
-};
 const isStyle = (value: string) => supportBorderStyles.includes(value);
 const isColor = (value: string) => isValidColor(value);
 
@@ -90,10 +71,6 @@ const parseBorderStyle = (border: string): BorderConfig => {
 
 const patchBorder = (el: Node, style: CSSStyleDeclaration) => {
   const { yogaNode } = el;
-  // 1rem solid
-  // solid
-  // 1rem
-  const { borderLeftWidth = "0", borderLeftStyle = "solid", borderLeftColor = "#ffffff" } = style;
   const borderConfig = {
     left: genBorderConfig(parseBorderStyle(style.border), parseBorderStyle(style.borderLeft), {
       width: parseInt(style.borderLeftWidth),
@@ -116,10 +93,6 @@ const patchBorder = (el: Node, style: CSSStyleDeclaration) => {
       color: style.borderBottomColor,
     }),
   };
-  // if ("border" in style) {
-  //   const border = style["border"];
-  //   console.log(borderWidth, borderStyle, borderColor);
-  // }
   for (const edge in borderConfig) {
     const config = borderConfig[edge as keyof typeof borderConfig];
     switch (edge) {
