@@ -17,12 +17,15 @@ export type BorderConfig = {
 export const DEFAULT_BORDER_CONFIG: BorderConfig = {
   width: 0,
   style: "solid",
-  color: "#ffffff",
-};
+  color: "white",
+} as const;
 
-const genBorderConfig = (...configs: BorderConfig[]) => {
+const genBorderConfig = (...configs: (BorderConfig | undefined)[]) => {
   const config = extend({}, DEFAULT_BORDER_CONFIG);
   for (const cfg of configs) {
+    if (cfg === undefined) {
+      continue;
+    }
     if (cfg.width && cfg.width !== 0) {
       config.width = 1;
     }
@@ -36,10 +39,10 @@ const genBorderConfig = (...configs: BorderConfig[]) => {
   return config;
 };
 
-const parseBorderStyle = (border: string): BorderConfig => {
-  const borderObj: BorderConfig = DEFAULT_BORDER_CONFIG;
+const parseBorderStyle = (border: string): BorderConfig | undefined => {
+  const borderObj: BorderConfig = extend({}, DEFAULT_BORDER_CONFIG);
   if (!border || border === "") {
-    return borderObj;
+    return undefined;
   }
   borderObj.width = 1;
   const borderSplitList = border.split(" ");
