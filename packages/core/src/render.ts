@@ -7,7 +7,6 @@ import {
   isNamedColor,
   isRgbColor,
   SupportNamedColor,
-  supportNamedColors,
 } from "./utils";
 
 const columns = 100; // dev
