@@ -1,7 +1,7 @@
-import { Edge } from "yoga-layout";
+import { Align, Edge, FlexDirection, Justify, Wrap } from "yoga-layout";
 import { Node } from "./nodeOps";
 import { BORDER_STYLE } from "./constants";
-import { extend, isValidColor } from "./utils";
+import { convertKeysToCamelCase, extend, isValidColor } from "./utils";
 const supportBorderStyles = Object.keys(BORDER_STYLE);
 
 const isStyle = (value: string) => supportBorderStyles.includes(value);
@@ -259,6 +259,110 @@ const patchMargin = (el: Node, style: CSSStyleDeclaration) => {
   if (marginConfig.left > 0) yogaNode.setMargin(Edge.Left, marginConfig.left);
 };
 
+const patchFlexBox = (el: Node, style: CSSStyleDeclaration) => {
+  const { yogaNode } = el;
+  switch (style.flexDirection) {
+    case "row":
+      yogaNode.setFlexDirection(FlexDirection.Row);
+      break;
+    case "column":
+      yogaNode.setFlexDirection(FlexDirection.Column);
+      break;
+    case "row-reverse":
+      yogaNode.setFlexDirection(FlexDirection.RowReverse);
+      break;
+    case "column-reverse":
+      yogaNode.setFlexDirection(FlexDirection.ColumnReverse);
+      break;
+    default:
+      yogaNode.setFlexDirection(FlexDirection.Column);
+      break;
+  }
+  switch (style.alignContent) {
+    case "flex-start":
+      yogaNode.setAlignContent(Align.FlexStart);
+      break;
+    case "flex-end":
+      yogaNode.setAlignContent(Align.FlexEnd);
+      break;
+    case "stretch":
+      yogaNode.setAlignContent(Align.Stretch);
+      break;
+    case "center":
+      yogaNode.setAlignContent(Align.Center);
+      break;
+    case "space-between":
+      yogaNode.setAlignContent(Align.SpaceBetween);
+      break;
+    case "space-around":
+      yogaNode.setAlignContent(Align.SpaceAround);
+      break;
+    case "space-evenly":
+      yogaNode.setAlignContent(Align.SpaceEvenly);
+      break;
+    default:
+      yogaNode.setAlignContent(Align.FlexStart);
+      break;
+  }
+  switch (style.alignItems) {
+    case "stretch":
+      yogaNode.setAlignItems(Align.Stretch);
+      break;
+    case "flex-start":
+      yogaNode.setAlignItems(Align.FlexStart);
+      break;
+    case "flex-end":
+      yogaNode.setAlignItems(Align.FlexEnd);
+      break;
+    case "center":
+      yogaNode.setAlignItems(Align.Center);
+      break;
+    case "baseline":
+      yogaNode.setAlignItems(Align.Baseline);
+      break;
+    default:
+      yogaNode.setAlignItems(Align.Stretch);
+      break;
+  }
+  switch (style.justifyContent) {
+    case "flex-start":
+      yogaNode.setJustifyContent(Justify.FlexStart);
+      break;
+    case "flex-end":
+      yogaNode.setJustifyContent(Justify.FlexEnd);
+      break;
+    case "center":
+      yogaNode.setJustifyContent(Justify.Center);
+      break;
+    case "space-between":
+      yogaNode.setJustifyContent(Justify.SpaceBetween);
+      break;
+    case "space-around":
+      yogaNode.setJustifyContent(Justify.SpaceAround);
+      break;
+    case "space-evenly":
+      yogaNode.setJustifyContent(Justify.SpaceEvenly);
+      break;
+    default:
+      yogaNode.setJustifyContent(Justify.FlexStart);
+      break;
+  }
+  switch (style.flexWrap) {
+    case "nowrap":
+      yogaNode.setFlexWrap(Wrap.NoWrap);
+      break;
+    case "wrap":
+      yogaNode.setFlexWrap(Wrap.Wrap);
+      break;
+    case "wrap-reverse":
+      yogaNode.setFlexWrap(Wrap.WrapReverse);
+      break;
+    default:
+      yogaNode.setFlexWrap(Wrap.NoWrap);
+      break;
+  }
+};
+
 const patchStyle = (el: Node, style: CSSStyleDeclaration) => {
   const { yogaNode } = el;
   Object.keys(style).forEach((key) => {
@@ -272,6 +376,7 @@ const patchStyle = (el: Node, style: CSSStyleDeclaration) => {
     }
   });
   el.style = extend(el.style, style);
+  patchFlexBox(el, style);
   patchBorder(el, style);
   patchMargin(el, style);
   patchPadding(el, style);
@@ -284,6 +389,7 @@ export const patchProp = (
   nextValue: Record<string, any>,
 ) => {
   if (key === "style") {
-    patchStyle(el, nextValue as CSSStyleDeclaration);
+    const style = convertKeysToCamelCase(nextValue);
+    patchStyle(el, style as CSSStyleDeclaration);
   }
 };

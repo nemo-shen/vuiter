@@ -31,6 +31,31 @@ const isNamedColor = (color: string): color is SupportNamedColor => {
 const isValidColor = (color: string) =>
   color && (isHexColor(color) || isRgbColor(color) || isNamedColor(color));
 
+/**
+ * only support kebab-string
+ * @param str 
+ * @returns 
+ */
+const toCamelCase = (str: string) => {
+  return str
+    .split("-")
+    .map((word, index) => {
+      if (index === 0) {
+        return word;
+      }
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join("");
+};
+
+const convertKeysToCamelCase = (obj: Record<string, any>) => {
+  return Object.keys(obj).reduce((acc, key: string) => {
+    const camelKey = toCamelCase(key);
+    acc[camelKey] = obj[key];
+    return acc;
+  }, {} as Record<string, any>);
+};
+
 export {
   isDef,
   extend,
@@ -40,5 +65,7 @@ export {
   isNamedColor,
   isValidColor,
   supportNamedColors,
+  toCamelCase,
+  convertKeysToCamelCase,
 };
 export type { SupportNamedColor };
