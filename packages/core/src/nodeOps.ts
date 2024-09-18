@@ -193,6 +193,7 @@ const setText = (node: VuiText, text: string): void => {
   node.data = text;
 };
 const setElementText = (el: VuiElement, text: string): void => {
+  console.log('setElementText', text);
   el.textContent = text;
 
   el.childNodes.forEach((child) => {

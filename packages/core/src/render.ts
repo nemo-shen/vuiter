@@ -2,12 +2,7 @@ import chalk from "chalk";
 import { Node } from "./nodeOps";
 import { Edge } from "yoga-layout";
 import { BORDER_STYLE } from "./constants";
-import {
-  isHexColor,
-  isNamedColor,
-  isRgbColor,
-  SupportNamedColor,
-} from "./utils";
+import { isHexColor, isNamedColor, isRgbColor, SupportNamedColor } from "./utils";
 
 const columns = 100; // dev
 const rows = 40; // dev
@@ -32,14 +27,23 @@ function setColor(text: string, color: string) {
   return text;
 }
 
-function drawNodeToCanvas(el: Node) {
+type Layout = {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+  width: number;
+  height: number;
+};
+
+function drawNodeToCanvas(el: Node, parentLayout: Layout) {
   const { yogaNode: node } = el;
   if (!node) return;
   const style = {
     borderStyle: "solid",
   } as Record<string, any>;
-  const left = node.getComputedLeft();
-  const top = node.getComputedTop();
+  const left = node.getComputedLeft() + parentLayout.left;
+  const top = node.getComputedTop() + parentLayout.top;
   const width = node.getComputedWidth();
   const height = node.getComputedHeight();
 
@@ -72,6 +76,7 @@ function drawNodeToCanvas(el: Node) {
     }
   }
 
+  // 绘制 border
   const right = left + width - 1;
   const bottom = top + height - 1;
   for (let y = top; y <= bottom; y++) {
@@ -147,6 +152,8 @@ function drawNodeToCanvas(el: Node) {
 
   // 如果节点元素有textContent，则将其渲染到节点内
   if (el.textContent) {
+    // console.log(node.getComputedLayout());
+    // console.log(el.textContent);
     const textList = el.textContent.split("");
     let row = paddingTop + top + 1;
     while (row < bottom - paddingBottom && textList.length > 0) {
@@ -161,12 +168,12 @@ function drawNodeToCanvas(el: Node) {
   }
 
   for (const child of el.childNodes) {
-    drawNodeToCanvas(child);
+    drawNodeToCanvas(child, node.getComputedLayout());
   }
 }
 
 const render = (el: Node) => {
-  drawNodeToCanvas(el);
+  drawNodeToCanvas(el, el.yogaNode.getComputedLayout());
   canvas.forEach((row) => {
     process.stdout.write(row.join("") + "\n");
   });
