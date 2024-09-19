@@ -36,6 +36,12 @@ type Layout = {
   height: number;
 };
 
+const printCanvas = (canvas: string[][]) => {
+  for (const columns of canvas) {
+    console.log(columns.join(""));
+  }
+};
+
 function drawNodeToCanvas(el: Node, parentLayout: Layout) {
   const { yogaNode: node } = el;
   if (!node) return;
@@ -167,8 +173,14 @@ function drawNodeToCanvas(el: Node, parentLayout: Layout) {
     }
   }
 
+  const layout = node.getComputedLayout();
+  layout.left += parentLayout.left;
+  layout.right += parentLayout.right;
+  layout.top += parentLayout.top;
+  layout.bottom += parentLayout.bottom;
+  // TODO: 实际上还需要计算宽高，内部的子元素不能大于父元素的宽高，或者要自动撑开
   for (const child of el.childNodes) {
-    drawNodeToCanvas(child, node.getComputedLayout());
+    drawNodeToCanvas(child, layout);
   }
 }
 
