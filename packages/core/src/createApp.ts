@@ -2,7 +2,6 @@ import type { Component, DefineComponent, PropType } from "@vue/runtime-core";
 import { createRenderer, defineComponent, h, onMounted } from "@vue/runtime-core";
 import { patchProp } from "./patchProp";
 import { nodeOps, VUIElement, VUINode } from "./nodeOps";
-import App from "./app";
 import { Direction } from "yoga-layout";
 import { extend } from "./utils";
 import { render } from "./render";

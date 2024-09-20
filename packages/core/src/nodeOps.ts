@@ -138,7 +138,7 @@ export class Node implements Node {
   static COMMENT_NODE = 8;
 }
 
-class VuiElement extends Node {
+export class VuiElement extends Node {
   nodeType = Node.ELEMENT_NODE;
   tagName: string;
   props: Record<string, any>;
@@ -149,13 +149,12 @@ class VuiElement extends Node {
     this.props = {};
   }
 }
-class VuiText extends Node {
-  data: string;
+export class VuiText extends Node {
   type = Node.TEXT_NODE;
 
   constructor(data: string) {
     super();
-    this.data = data;
+    this.textContent = data;
   }
 }
 
@@ -184,16 +183,18 @@ const createElement = (tag: string): VuiElement => {
   return new VuiElement(tag);
 };
 const createText = (data: string): VuiText => {
+  console.log("createText", data);
   return new VuiText(data);
 };
 const createComment = (data: string): VuiComment => {
   return new VuiComment(data);
 };
 const setText = (node: VuiText, text: string): void => {
+  console.log("setText", text);
   node.data = text;
 };
 const setElementText = (el: VuiElement, text: string): void => {
-  console.log('setElementText', text);
+  console.log("setElementText", text);
   el.textContent = text;
 
   el.childNodes.forEach((child) => {

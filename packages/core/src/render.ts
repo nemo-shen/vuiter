@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { Node } from "./nodeOps";
+import { Node, VuiText, VuiElement } from "./nodeOps";
 import { Edge } from "yoga-layout";
 import { BORDER_STYLE } from "./constants";
 import { isHexColor, isNamedColor, isRgbColor, SupportNamedColor } from "./utils";
@@ -156,12 +156,13 @@ function drawNodeToCanvas(el: Node, parentLayout: Layout) {
     }
   }
 
-  // 如果节点元素有textContent，则将其渲染到节点内
+  // 如果碰到有内容就需要换行，除非是inline样式
   if (el.textContent) {
-    // console.log(node.getComputedLayout());
-    // console.log(el.textContent);
     const textList = el.textContent.split("");
     let row = paddingTop + top + 1;
+    // if (el.textContent.includes('hhh')) {
+    //   console.log(row, height, row, bottom, paddingBottom, row < bottom - paddingBottom);
+    // }
     while (row < bottom - paddingBottom && textList.length > 0) {
       let col = paddingLeft + left + 1;
       while (col < right - paddingRight && textList.length > 0) {
@@ -173,6 +174,11 @@ function drawNodeToCanvas(el: Node, parentLayout: Layout) {
     }
   }
 
+  // if (el.textContent) {
+  //   if (el.textContent.includes('hhh')) {
+  //     printCanvas(canvas);
+  //   }
+  // }
   const layout = node.getComputedLayout();
   layout.left += parentLayout.left;
   layout.right += parentLayout.right;
