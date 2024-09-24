@@ -67,6 +67,10 @@ type SupportCSSStyleDeclarationKeys =
   | "borderBottomWidth";
 
 export class Node implements Node {
+  static ELEMENT_NODE = 1;
+  static TEXT_NODE = 3;
+  static COMMENT_NODE = 8;
+  type = Node.ELEMENT_NODE | Node.TEXT_NODE | Node.COMMENT_NODE;
   childNodes: Node[] = [];
   parentNode: Node | null = null;
   textContent: string | null = null;
@@ -106,23 +110,31 @@ export class Node implements Node {
     this.yogaNode = Yoga.Node.create();
   }
 
-  insertBefore<T extends Node>(node: T, child: Node | null = null): T {
-    if (child) {
-      const index = this.childNodes.indexOf(child);
-      if (index !== -1) {
-        node.nextSibling = child;
-        this.childNodes.splice(index, 0, node);
-        this.yogaNode.insertChild(node.yogaNode, index);
-      }
+  insertBefore<T extends Node>(node: T, ref: Node | null = null): T {
+    console.log(ref);
+    if (ref) {
+      // const index = this.childNodes.indexOf(ref);
+      // if (index !== -1) {
+      //   node.nextSibling = ref;
+      //   this.childNodes.splice(index, 0, node);
+      //   this.yogaNode.insertChild(node.yogaNode, index);
+      // }
     } else {
+      console.log("el insertBefore", node.textContent);
       this.childNodes.push(node);
       this.yogaNode.insertChild(node.yogaNode, this.yogaNode.getChildCount());
+      // console.log(
+      //   "insertBefore",
+      //   node.childNodes.map((el) => el.textContent),
+      //   child,
+      // );
     }
     return node;
   }
 
   removeChild<T extends Node>(child: T): T {
     const index = this.childNodes.indexOf(child);
+    console.log("remove child", index);
     if (index !== -1) {
       this.childNodes.splice(index, 1);
       if (index > 1) {
@@ -132,14 +144,9 @@ export class Node implements Node {
     }
     return child;
   }
-
-  static ELEMENT_NODE = 1;
-  static TEXT_NODE = 3;
-  static COMMENT_NODE = 8;
 }
 
 export class VuiElement extends Node {
-  nodeType = Node.ELEMENT_NODE;
   tagName: string;
   props: Record<string, any>;
 
@@ -171,6 +178,7 @@ class VuiComment extends Node {
 }
 
 const insert = (child: Node, parent: Node, ref: Node | null = null): void => {
+  console.log("insert", !!child, child.textContent, !!parent, ref);
   parent.insertBefore(child, ref);
 };
 const remove = (child: Node): void => {
@@ -194,7 +202,6 @@ const setText = (node: VuiText, text: string): void => {
   node.data = text;
 };
 const setElementText = (el: VuiElement, text: string): void => {
-  console.log("setElementText", text);
   el.textContent = text;
 
   el.childNodes.forEach((child) => {

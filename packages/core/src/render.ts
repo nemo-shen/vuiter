@@ -82,6 +82,11 @@ function drawNodeToCanvas(el: Node, parentLayout: Layout) {
     }
   }
 
+  // console.log(el.textContent);
+  // if (el.borderConfig.left.color === 'green') {
+  //   return;
+  // }
+
   // 绘制 border
   const right = left + width - 1;
   const bottom = top + height - 1;
@@ -157,13 +162,10 @@ function drawNodeToCanvas(el: Node, parentLayout: Layout) {
   }
 
   // 如果碰到有内容就需要换行，除非是inline样式
-  if (el.textContent) {
+  if (el.type === Node.TEXT_NODE && el.textContent) {
     const textList = el.textContent.split("");
-    let row = paddingTop + top + 1;
-    // if (el.textContent.includes('hhh')) {
-    //   console.log(row, height, row, bottom, paddingBottom, row < bottom - paddingBottom);
-    // }
-    while (row < bottom - paddingBottom && textList.length > 0) {
+    let row = paddingTop + top;
+    while (textList.length > 0) {
       let col = paddingLeft + left + 1;
       while (col < right - paddingRight && textList.length > 0) {
         const char = textList.shift();
@@ -174,11 +176,6 @@ function drawNodeToCanvas(el: Node, parentLayout: Layout) {
     }
   }
 
-  // if (el.textContent) {
-  //   if (el.textContent.includes('hhh')) {
-  //     printCanvas(canvas);
-  //   }
-  // }
   const layout = node.getComputedLayout();
   layout.left += parentLayout.left;
   layout.right += parentLayout.right;
