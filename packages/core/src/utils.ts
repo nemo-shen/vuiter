@@ -25,16 +25,32 @@ const supportNamedColors = [
   "grey", // alias blackBright
 ] as const;
 type SupportNamedColor = (typeof supportNamedColors)[number];
+type BgColorNames = `bg${Capitalize<typeof supportNamedColors[number]>}`;
 const isNamedColor = (color: string): color is SupportNamedColor => {
   return supportNamedColors.includes(color.toLowerCase() as SupportNamedColor);
 };
 const isValidColor = (color: string) =>
   color && (isHexColor(color) || isRgbColor(color) || isNamedColor(color));
+const extractRGBValues = (rgbString: string): { red: number; green: number; blue: number } => {
+  const regex = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/;
+  const match = rgbString.match(regex);
+
+  if (match) {
+    // 解析并返回 RGB 值
+    const red = parseInt(match[1], 10);
+    const green = parseInt(match[2], 10);
+    const blue = parseInt(match[3], 10);
+
+    return { red, green, blue };
+  } else {
+    throw new Error("Invalid RGB string format");
+  }
+}
 
 /**
  * only support kebab-string
- * @param str 
- * @returns 
+ * @param str
+ * @returns
  */
 const toCamelCase = (str: string) => {
   return str
@@ -49,11 +65,14 @@ const toCamelCase = (str: string) => {
 };
 
 const convertKeysToCamelCase = (obj: Record<string, any>) => {
-  return Object.keys(obj).reduce((acc, key: string) => {
-    const camelKey = toCamelCase(key);
-    acc[camelKey] = obj[key];
-    return acc;
-  }, {} as Record<string, any>);
+  return Object.keys(obj).reduce(
+    (acc, key: string) => {
+      const camelKey = toCamelCase(key);
+      acc[camelKey] = obj[key];
+      return acc;
+    },
+    {} as Record<string, any>,
+  );
 };
 
 export {
@@ -67,5 +86,6 @@ export {
   supportNamedColors,
   toCamelCase,
   convertKeysToCamelCase,
+  extractRGBValues,
 };
-export type { SupportNamedColor };
+export type { SupportNamedColor, BgColorNames };

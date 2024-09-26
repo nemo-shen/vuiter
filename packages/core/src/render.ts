@@ -2,7 +2,14 @@ import chalk from "chalk";
 import { Node, VuiText, VuiElement } from "./nodeOps";
 import { Edge } from "yoga-layout";
 import { BORDER_STYLE } from "./constants";
-import { isHexColor, isNamedColor, isRgbColor, SupportNamedColor } from "./utils";
+import {
+  BgColorNames,
+  extractRGBValues,
+  isHexColor,
+  isNamedColor,
+  isRgbColor,
+  SupportNamedColor,
+} from "./utils";
 
 const columns = 100; // dev
 const rows = 40; // dev
@@ -85,7 +92,17 @@ function drawNodeToCanvas(el: Node, parentLayout: Layout) {
 
   let contentText = " ";
   if (el.style.backgroundColor) {
-    contentText = chalk.bgRed(contentText);
+    const { backgroundColor } = el.style;
+    if (isHexColor(backgroundColor)) {
+      contentText = chalk.bgHex(backgroundColor)(contentText);
+    } else if (isRgbColor(backgroundColor)) {
+      const { red, green, blue } = extractRGBValues(backgroundColor);
+      contentText = chalk.bgRgb(red, green, blue)(contentText);
+    } else if (isNamedColor(el.style.backgroundColor)) {
+      const [firstLetter, ...restLetter] = backgroundColor;
+      const bgColorName = `bg${firstLetter.toUpperCase()}${restLetter.join("")}` as BgColorNames;
+      contentText = chalk[bgColorName](contentText);
+    }
   }
 
   // 绘制 border

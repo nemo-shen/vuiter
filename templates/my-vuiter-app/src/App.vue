@@ -10,7 +10,6 @@
           border: 1rem solid yellow;
           padding: 2rem;
           margin: 1rem;
-          background-color: red;
         "
       >
         Hello World!
