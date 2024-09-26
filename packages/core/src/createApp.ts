@@ -1,12 +1,12 @@
 import type { Component, DefineComponent, PropType } from "@vue/runtime-core";
 import { createRenderer, defineComponent, h, onMounted } from "@vue/runtime-core";
 import { patchProp } from "./patchProp";
-import { nodeOps, VUIElement, VUINode } from "./nodeOps";
+import { nodeOps, VuiElement, Node } from "./nodeOps";
 import { Direction } from "yoga-layout";
 import { extend } from "./utils";
 import { render } from "./render";
 
-const { render: baseRender, createApp: baseCreateApp } = createRenderer<VUINode, VUIElement>(
+const { render: baseRender, createApp: baseCreateApp } = createRenderer<Node, VuiElement>(
   extend({ patchProp }, nodeOps),
 );
 
@@ -19,7 +19,7 @@ export const VUIApp = defineComponent({
       required: true,
     },
     body: {
-      type: Object as PropType<VUIElement>,
+      type: Object as PropType<VuiElement>,
       required: true,
     },
   },

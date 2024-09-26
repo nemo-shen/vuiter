@@ -64,7 +64,9 @@ type SupportCSSStyleDeclarationKeys =
   | "borderBottom"
   | "borderBottomColor"
   | "borderBottomStyle"
-  | "borderBottomWidth";
+  | "borderBottomWidth"
+  | "backgroundColor"
+  ;
 
 export class Node implements Node {
   static ELEMENT_NODE = 1;
@@ -145,7 +147,6 @@ export class Node implements Node {
     return child;
   }
 }
-
 export class VuiElement extends Node {
   tagName: string;
   props: Record<string, any>;

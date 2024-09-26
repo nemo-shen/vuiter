@@ -71,21 +71,22 @@ function drawNodeToCanvas(el: Node, parentLayout: Layout) {
   const borderRight = node.getComputedBorder(Edge.Right);
   const borderBottom = node.getComputedBorder(Edge.Bottom);
 
-  const gapText = " ";
+  // TODO
+  let gapText = " ";
 
   // 绘制 margin
   for (let y = top - marginTop; y < top + height + marginBottom; y++) {
     for (let x = left - marginLeft; x < left + width + marginRight; x++) {
       if (y >= 0 && y < canvas.length && x >= 0 && x < canvas[y].length) {
-        canvas[y][x] = gapText;
+        canvas[y][x] = " ";
       }
     }
   }
 
-  // console.log(el.textContent);
-  // if (el.borderConfig.left.color === 'green') {
-  //   return;
-  // }
+  let contentText = " ";
+  if (el.style.backgroundColor) {
+    contentText = chalk.bgRed(contentText);
+  }
 
   // 绘制 border
   const right = left + width - 1;
@@ -154,7 +155,7 @@ function drawNodeToCanvas(el: Node, parentLayout: Layout) {
         }
 
         if (!isBorder) {
-          text = " ";
+          text = contentText;
         }
       }
       canvas[y][x] = text;
