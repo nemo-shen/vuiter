@@ -66,6 +66,7 @@ type SupportCSSStyleDeclarationKeys =
   | "borderBottomStyle"
   | "borderBottomWidth"
   | "backgroundColor"
+  | "color"
   ;
 
 export class Node implements Node {

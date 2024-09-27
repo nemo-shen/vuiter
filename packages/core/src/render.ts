@@ -180,6 +180,19 @@ function drawNodeToCanvas(el: Node, parentLayout: Layout) {
   }
 
   // 如果碰到有内容就需要换行，除非是inline样式
+  let textShader = (char: string) => char;
+  if (el.style.color) {
+    const { color } = el.style;
+    if (isHexColor(color)) {
+      textShader = chalk.bgHex(color);
+    } else if (isRgbColor(color)) {
+      const { red, green, blue } = extractRGBValues(color);
+      textShader = chalk.bgRgb(red, green, blue);
+    } else if (isNamedColor(color)) {
+      textShader = chalk[color];
+    }
+  }
+
   if (el.type === Node.TEXT_NODE && el.textContent) {
     const textList = el.textContent.split("");
     let row = paddingTop + top;
@@ -187,7 +200,7 @@ function drawNodeToCanvas(el: Node, parentLayout: Layout) {
       let col = paddingLeft + left + 1;
       while (col < right - paddingRight && textList.length > 0) {
         const char = textList.shift();
-        canvas[row][col] = char;
+        canvas[row][col] = textShader(char as string);
         col++;
       }
       row++;
@@ -199,7 +212,6 @@ function drawNodeToCanvas(el: Node, parentLayout: Layout) {
   layout.right += parentLayout.right;
   layout.top += parentLayout.top;
   layout.bottom += parentLayout.bottom;
-  // TODO: 实际上还需要计算宽高，内部的子元素不能大于父元素的宽高，或者要自动撑开
   for (const child of el.childNodes) {
     drawNodeToCanvas(child, layout);
   }

@@ -8,11 +8,12 @@
           width: 30rem;
           height: 10rem;
           border: 1rem solid yellow;
-          padding: 2rem;
+          padding: 1rem;
           margin: 1rem;
+          color: red;
         "
       >
-        Hello World!
+      Hello World!
       </div>
     </div>
     <div
