@@ -26,7 +26,10 @@ const supportNamedColors = [
 ] as const;
 type SupportNamedColor = (typeof supportNamedColors)[number];
 type BgColorNames = `bg${Capitalize<typeof supportNamedColors[number]>}`;
-const isNamedColor = (color: string): color is SupportNamedColor => {
+const isNamedColor = (color: string): boolean => {
+  if (!color) {
+    return false;
+  }
   return supportNamedColors.includes(color.toLowerCase() as SupportNamedColor);
 };
 const isValidColor = (color: string) =>

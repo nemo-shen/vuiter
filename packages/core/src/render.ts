@@ -179,18 +179,16 @@ function drawNodeToCanvas(el: Node, parentLayout: Layout) {
     }
   }
 
-  // 如果碰到有内容就需要换行，除非是inline样式
   let textShader = (char: string) => char;
-  if (el.style.color) {
-    const { color } = el.style;
-    if (isHexColor(color)) {
-      textShader = chalk.bgHex(color);
-    } else if (isRgbColor(color)) {
-      const { red, green, blue } = extractRGBValues(color);
-      textShader = chalk.bgRgb(red, green, blue);
-    } else if (isNamedColor(color)) {
-      textShader = chalk[color];
-    }
+  el.style.color = el.style.color || el.parentNode?.style.color || '';
+  const { color } = el.style;
+  if (isHexColor(color)) {
+    textShader = chalk.hex(color);
+  } else if (isRgbColor(color)) {
+    const { red, green, blue } = extractRGBValues(color);
+    textShader = chalk.rgb(red, green, blue);
+  } else if (isNamedColor(color)) {
+    textShader = chalk[color as SupportNamedColor];
   }
 
   if (el.type === Node.TEXT_NODE && el.textContent) {
