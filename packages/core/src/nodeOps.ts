@@ -216,6 +216,15 @@ const nextSibling = (node: Node): Node | null => {
   return node.nextSibling;
 };
 
+// TODO: 实现对静态内容的优化处理
+const insertStaticContent = (
+  content: string,
+  parent: VuiElement,
+  anchor: Node | null,
+) => {
+  return [null, null];
+}
+
 export const nodeOps = {
   insert,
   remove,
@@ -226,4 +235,5 @@ export const nodeOps = {
   setElementText,
   parentNode,
   nextSibling,
+  insertStaticContent,
 };

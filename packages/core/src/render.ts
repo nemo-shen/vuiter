@@ -180,7 +180,7 @@ function drawNodeToCanvas(el: Node, parentLayout: Layout) {
   }
 
   let textShader = (char: string) => char;
-  el.style.color = el.style.color || el.parentNode?.style.color || '';
+  el.style.color = el.style.color || el.parentNode?.style.color || "";
   const { color } = el.style;
   if (isHexColor(color)) {
     textShader = chalk.hex(color);
@@ -196,6 +196,7 @@ function drawNodeToCanvas(el: Node, parentLayout: Layout) {
     let row = paddingTop + top;
     while (textList.length > 0) {
       let col = paddingLeft + left + 1;
+      console.log(textList, col < right - paddingRight && textList.length > 0);
       while (col < right - paddingRight && textList.length > 0) {
         const char = textList.shift();
         canvas[row][col] = textShader(char as string);
