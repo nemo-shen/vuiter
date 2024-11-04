@@ -52,7 +52,6 @@ export const createApp = (rootComponent: Component) => {
   const body = nodeOps.createElement("div");
   body.yogaNode.setWidth(30);
   body.yogaNode.setHeight(20);
-  // const rootContainer = nodeOps.createElement("div");
   const app = baseCreateApp(VUIApp, {
     root: rootComponent, // 开发者的根节点应该作为vuiter app 的子节点
     body,
