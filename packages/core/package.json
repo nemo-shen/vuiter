@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
+    "@vitejs/plugin-vue": "^5.1.2",
     "eslint-config-prettier": "catalog:",
     "postinstall-postinstall": "catalog:",
     "prettier": "catalog:",

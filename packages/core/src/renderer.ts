@@ -466,6 +466,7 @@ const renderer = (
   }
 
   if (target) {
+    console.log(layout);
     canvas = replace2DArray(target, canvas, { startX, startY });
   }
 

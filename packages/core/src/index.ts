@@ -1,1 +1,3 @@
-export { createApp } from "./createApp";
+import createApp from "./createApp";
+
+export { createApp };
